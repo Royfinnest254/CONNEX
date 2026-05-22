@@ -1,0 +1,278 @@
+# internal/enrichment/rules.yaml
+# Connex ISO 8583 → ISO 20022 enrichment rules.
+# Rules are evaluated in order. First matching rule wins for each outcome field.
+# source: "rules_engine" means 100% deterministic, confidence: 1.0
+# AI classifier (purpose_code when rules cannot determine) is deferred to v0.2.
+
+version: "1.0"
+rules:
+
+  # ── Regulatory codes (CBK framework) ─────────────────────────────────────
+
+  - id: CBK-REG-301
+    description: "Large cross-institutional trade payment ≥ KES 100,000"
+    condition:
+      amount_min_kes: 100000
+      currency_iso4217: "404"       # KES
+      cross_institutional: true
+    outcome:
+      field: regulatory_reporting_code
+      value: "301"
+    confidence: 1.0
+
+  - id: CBK-REG-201
+    description: "Salary / payroll payment 10,000–99,999 KES"
+    condition:
+      amount_min_kes: 10000
+      amount_max_kes: 99999
+      processing_code_prefix: "40"  # F3 first 2 digits = credit to account
+    outcome:
+      field: regulatory_reporting_code
+      value: "201"
+    confidence: 1.0
+
+  - id: CBK-REG-202
+    description: "Tax / government payment — merchant type 9311"
+    condition:
+      merchant_type: "9311"
+    outcome:
+      field: regulatory_reporting_code
+      value: "202"
+    confidence: 1.0
+
+  - id: CBK-REG-203
+    description: "Utility payment — merchant types 4900, 4911, 4931"
+    condition:
+      merchant_type_in: ["4900", "4911", "4931"]
+    outcome:
+      field: regulatory_reporting_code
+      value: "203"
+    confidence: 1.0
+
+  - id: CBK-REG-204
+    description: "Loan repayment — processing code 38xxxx"
+    condition:
+      processing_code_prefix: "38"
+    outcome:
+      field: regulatory_reporting_code
+      value: "204"
+    confidence: 1.0
+
+  - id: CBK-REG-205
+    description: "Cross-border remittance (non-KES currency)"
+    condition:
+      currency_iso4217_not: "404"
+    outcome:
+      field: regulatory_reporting_code
+      value: "205"
+    confidence: 1.0
+
+  - id: CBK-REG-100
+    description: "Standard domestic retail payment < KES 10,000"
+    condition:
+      amount_max_kes: 9999
+      currency_iso4217: "404"
+    outcome:
+      field: regulatory_reporting_code
+      value: "100"
+    confidence: 1.0
+
+  # ── Purpose codes (ISO 20022 ExternalPurpose1Code) ───────────────────────
+
+  - id: PURP-SALA
+    description: "Salary payment — processing code 400000 (credit, general)"
+    condition:
+      processing_code: "400000"
+    outcome:
+      field: purpose_code
+      value: "SALA"
+    confidence: 1.0
+
+  - id: PURP-TAXS
+    description: "Tax payment to government entity"
+    condition:
+      merchant_type: "9311"
+    outcome:
+      field: purpose_code
+      value: "TAXS"
+    confidence: 1.0
+
+  - id: PURP-LOAN
+    description: "Loan repayment — processing code 380000"
+    condition:
+      processing_code_prefix: "38"
+    outcome:
+      field: purpose_code
+      value: "LOAN"
+    confidence: 1.0
+
+  - id: PURP-UTIL
+    description: "Utility bill payment"
+    condition:
+      merchant_type_in: ["4900", "4911", "4931"]
+    outcome:
+      field: purpose_code
+      value: "BEXP"
+    confidence: 1.0
+
+  - id: PURP-SUPP
+    description: "Supplier / B2B payment ≥ KES 100,000"
+    condition:
+      amount_min_kes: 100000
+      processing_code_prefix: "40"
+    outcome:
+      field: purpose_code
+      value: "SUPP"
+    confidence: 1.0
+
+  - id: PURP-RIMV
+    description: "Cross-border remittance (non-KES)"
+    condition:
+      currency_iso4217_not: "404"
+    outcome:
+      field: purpose_code
+      value: "RIMV"
+    confidence: 1.0
+
+  # ── Settlement method (rail lookup) ──────────────────────────────────────
+
+  - id: RAIL-KEPSS
+    description: "KEPSS (Kenya Electronic Payment and Settlement System) — large value ≥ KES 1,000,000"
+    condition:
+      amount_min_kes: 1000000
+    outcome:
+      field: settlement_method
+      value: "CLRG"
+      local_instrument: "KEPSS"
+    confidence: 1.0
+
+  - id: RAIL-PESALINK
+    description: "PesaLink — interbank retail ≥ KES 10 and < KES 999,999"
+    condition:
+      amount_min_kes: 10
+      amount_max_kes: 999999
+      cross_institutional: true
+    outcome:
+      field: settlement_method
+      value: "INDA"
+      local_instrument: "PESALINK"
+    confidence: 1.0
+
+  - id: RAIL-MPESA
+    description: "M-Pesa mobile money — acquiring institution prefix '63902'"
+    condition:
+      acquiring_institution_prefix: "63902"
+    outcome:
+      field: settlement_method
+      value: "INDA"
+      local_instrument: "MPESA"
+    confidence: 1.0
+
+  - id: RAIL-DEFAULT
+    description: "Default domestic settlement"
+    condition:
+      always: true
+    outcome:
+      field: settlement_method
+      value: "INDA"
+      local_instrument: "DOMESTIC"
+    confidence: 1.0
+
+  # ── Currency formatting ───────────────────────────────────────────────────
+
+  - id: CURR-KES
+    description: "Format KES amount from raw 12-digit integer to decimal"
+    condition:
+      currency_iso4217: "404"
+    outcome:
+      field: instructed_amount_currency
+      value: "KES"
+    confidence: 1.0
+
+  - id: CURR-USD
+    description: "USD cross-border transaction"
+    condition:
+      currency_iso4217: "840"
+    outcome:
+      field: instructed_amount_currency
+      value: "USD"
+    confidence: 1.0
+
+  - id: CURR-EUR
+    description: "EUR cross-border transaction"
+    condition:
+      currency_iso4217: "978"
+    outcome:
+      field: instructed_amount_currency
+      value: "EUR"
+    confidence: 1.0
+
+  - id: CURR-GBP
+    description: "GBP cross-border transaction"
+    condition:
+      currency_iso4217: "826"
+    outcome:
+      field: instructed_amount_currency
+      value: "GBP"
+    confidence: 1.0
+
+  # ── Charge bearer ─────────────────────────────────────────────────────────
+
+  - id: CHRG-SHA
+    description: "Shared charges (default for cross-institutional)"
+    condition:
+      cross_institutional: true
+    outcome:
+      field: charge_bearer
+      value: "SHAR"
+    confidence: 1.0
+
+  - id: CHRG-OUR
+    description: "Sender pays all charges (cross-border)"
+    condition:
+      currency_iso4217_not: "404"
+    outcome:
+      field: charge_bearer
+      value: "DEBT"
+    confidence: 1.0
+
+  - id: CHRG-DEFAULT
+    description: "Default charge bearer for intra-bank"
+    condition:
+      always: true
+    outcome:
+      field: charge_bearer
+      value: "SHAR"
+    confidence: 1.0
+
+  # ── Service level ─────────────────────────────────────────────────────────
+
+  - id: SVC-URGP
+    description: "Urgent payment — large value or explicit urgency flag"
+    condition:
+      amount_min_kes: 5000000
+    outcome:
+      field: service_level
+      value: "URGP"
+    confidence: 1.0
+
+  - id: SVC-NURG
+    description: "Normal payment"
+    condition:
+      always: true
+    outcome:
+      field: service_level
+      value: "NURG"
+    confidence: 1.0
+
+  # ── Deferred fields (AI v0.2) ─────────────────────────────────────────────
+
+  - id: AI-DEFER-PURPOSE
+    description: "Purpose code cannot be determined by rules — deferred to AI classifier v0.2"
+    condition:
+      purpose_code_unset: true
+    outcome:
+      field: purpose_code
+      value: "OTHR"
+      source: "DEFERRED_AI_CLASSIFIER_V0_2"
+    confidence: 0.0

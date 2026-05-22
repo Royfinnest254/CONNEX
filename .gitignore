@@ -1,0 +1,36 @@
+# Build artifacts
+bin/
+*.exe
+*.test
+*.out
+
+# Runtime data (never commit keys or database)
+data/
+keys/
+*.db
+*.db-shm
+*.db-wal
+*.key
+!*.key.pub
+
+# Benchmark results (too large for repo)
+bench/results/
+
+# Legacy and Large files
+*.webp
+*.zip
+vault_resp.json
+scratch/
+.env
+.env.example
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+node_modules

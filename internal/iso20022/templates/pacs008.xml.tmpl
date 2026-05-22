@@ -1,0 +1,102 @@
+{{- /* pacs.008.001.08 Credit Transfer Initiation — Connex enriched output */ -}}
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <FIToFICstmrCdtTrf>
+    <GrpHdr>
+      <MsgId>{{.MsgID}}</MsgId>
+      <CreDtTm>{{.CreationDateTime}}</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <SttlmInf>
+        <SttlmMtd>{{.SettlementMethod}}</SttlmMtd>
+        {{- if .LocalInstrument}}
+        <LclInstrm>
+          <Prtry>{{.LocalInstrument}}</Prtry>
+        </LclInstrm>
+        {{- end}}
+      </SttlmInf>
+    </GrpHdr>
+    <CdtTrfTxInf>
+      <PmtId>
+        <EndToEndId>{{.EndToEndID}}</EndToEndId>
+        <TxId>{{.TransactionID}}</TxId>
+      </PmtId>
+      <PmtTpInf>
+        <SvcLvl>
+          <Cd>{{.ServiceLevel}}</Cd>
+        </SvcLvl>
+        {{- if .PurposeCode}}
+        <CtgyPurp>
+          <Cd>{{.PurposeCode}}</Cd>
+        </CtgyPurp>
+        {{- end}}
+      </PmtTpInf>
+      <IntrBkSttlmAmt Ccy="{{.Currency}}">{{.Amount}}</IntrBkSttlmAmt>
+      <IntrBkSttlmDt>{{.SettlementDate}}</IntrBkSttlmDt>
+      <ChrgBr>{{.ChargeBearer}}</ChrgBr>
+      <InstgAgt>
+        <FinInstnId>
+          <Othr>
+            <Id>{{.AcquiringInstitution}}</Id>
+          </Othr>
+        </FinInstnId>
+      </InstgAgt>
+      <InstdAgt>
+        <FinInstnId>
+          <Othr>
+            <Id>{{.ForwardingInstitution}}</Id>
+          </Othr>
+        </FinInstnId>
+      </InstdAgt>
+      <Dbtr>
+        <Nm>DEFERRED_AI_NER_V0_2</Nm>
+      </Dbtr>
+      <DbtrAcct>
+        <Id>
+          <Othr>
+            <Id>{{.DebtorAccount}}</Id>
+          </Othr>
+        </Id>
+      </DbtrAcct>
+      <DbtrAgt>
+        <FinInstnId>
+          <Othr>
+            <Id>{{.AcquiringInstitution}}</Id>
+          </Othr>
+        </FinInstnId>
+      </DbtrAgt>
+      <CdtrAgt>
+        <FinInstnId>
+          <Othr>
+            <Id>{{.ForwardingInstitution}}</Id>
+          </Othr>
+        </FinInstnId>
+      </CdtrAgt>
+      <Cdtr>
+        <Nm>DEFERRED_AI_NER_V0_2</Nm>
+      </Cdtr>
+      <CdtrAcct>
+        <Id>
+          <Othr>
+            <Id>{{.CreditorAccount}}</Id>
+          </Othr>
+        </Id>
+      </CdtrAcct>
+      {{- if .RegulatoryCode}}
+      <RgltryRptg>
+        <DbtCdtRptgInd>DEBT</DbtCdtRptgInd>
+        <Authrty>
+          <Nm>CBK</Nm>
+          <Ctry>KE</Ctry>
+        </Authrty>
+        <Dtls>
+          <Cd>{{.RegulatoryCode}}</Cd>
+        </Dtls>
+      </RgltryRptg>
+      {{- end}}
+      <RmtInf>
+        <Ustrd>CONNEX-ENRICHED:{{.BundleID}}</Ustrd>
+      </RmtInf>
+    </CdtTrfTxInf>
+  </FIToFICstmrCdtTrf>
+</Document>
