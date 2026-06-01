@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONNEX SoloLearn Interactive Academy</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient-dark: linear-gradient(135deg, #0B0E14 0%, #151B26 100%);
+            --card-bg-dark: rgba(22, 28, 41, 0.65);
+            --border-color-dark: rgba(255, 255, 255, 0.08);
+            --text-main-dark: #E2E8F0;
+            --text-muted-dark: #94A3B8;
+            
+            --accent-cyan: #00F2FE;
+            --accent-purple: #B927FC;
+            --accent-blue: #4FACFE;
+            --success-glow: #00FF87;
+            --error-glow: #FF416C;
+            
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: var(--bg-gradient-dark);
+            color: var(--text-main-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color-dark);
+            background: rgba(11, 14, 20, 0.5);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #0B0E14;
+            font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, var(--text-muted-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            border: 1px solid var(--border-color-dark);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .stat-item span.highlight {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        .xp-bar-container {
+            width: 150px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        .xp-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent-cyan), var(--accent-blue));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        /* ── Module Road Map Dashboard ── */
+        .dashboard-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .welcome-hero {
+            text-align: center;
+            max-width: 600px;
+            margin-top: 1rem;
+        }
+
+        .welcome-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #FFF 0%, var(--text-muted-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-hero p {
+            color: var(--text-muted-dark);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .roadmap-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5rem;
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem 0;
+        }
+
+        .roadmap-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple), rgba(255, 255, 255, 0.05));
+            z-index: 1;
+        }
+
+        .node-card {
+            background: var(--card-bg-dark);
+            border: 1px solid var(--border-color-dark);
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 340px;
+            backdrop-filter: blur(12px);
+            z-index: 2;
+            cursor: pointer;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .node-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 24px;
+            height: 4px;
+            background: var(--border-color-dark);
+            z-index: -1;
+        }
+
+        .node-card.left {
+            align-self: flex-start;
+            margin-left: 5%;
+        }
+
+        .node-card.left::before {
+            right: -24px;
+        }
+
+        .node-card.right {
+            align-self: flex-end;
+            margin-right: 5%;
+        }
+
+        .node-card.right::before {
+            left: -24px;
+        }
+
+        .node-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.15);
+        }
+
+        .node-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+            transition: all var(--transition-speed);
+        }
+
+        .node-card:hover .node-icon-wrapper {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #0B0E14;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .node-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .node-content p {
+            font-size: 0.85rem;
+            color: var(--text-muted-dark);
+            line-height: 1.4;
+        }
+
+        .node-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--accent-purple);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(185, 39, 252, 0.3);
+        }
+
+        .node-status {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .node-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .node-card.locked:hover {
+            transform: none;
+            border-color: var(--border-color-dark);
+            box-shadow: none;
+        }
+
+        .node-card.locked .node-icon-wrapper {
+            color: var(--text-muted-dark);
+        }
+
+        .node-card.locked .node-status {
+            color: var(--text-muted-dark);
+        }
+
+        /* ── Lesson & Slide View ── */
+        .lesson-view {
+            display: none;
+            grid-template-columns: 1fr;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted-dark);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color var(--transition-speed);
+        }
+
+        .back-btn:hover {
+            color: #fff;
+        }
+
+        .slide-progress {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .slide-card {
+            background: var(--card-bg-dark);
+            border: 1px solid var(--border-color-dark);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(15px);
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .slide-content h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1.25rem;
+            color: #fff;
+        }
+
+        .slide-content p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-main-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Highlight box for key definitions */
+        .alert-box {
+            background: rgba(185, 39, 252, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .alert-box.warning {
+            background: rgba(255, 65, 108, 0.08);
+            border-left-color: var(--error-glow);
+        }
+
+        /* Code display blocks */
+        pre {
+            background: #07090D;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-cyan);
+        }
+
+        /* Quiz Choice layout */
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-choice {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color-dark);
+            border-radius: 12px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-main-dark);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .quiz-choice:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--accent-blue);
+        }
+
+        .quiz-choice.correct {
+            background: rgba(0, 255, 135, 0.08) !important;
+            border-color: var(--success-glow) !important;
+            box-shadow: 0 0 15px rgba(0, 255, 135, 0.1);
+        }
+
+        .quiz-choice.incorrect {
+            background: rgba(255, 65, 108, 0.08) !important;
+            border-color: var(--error-glow) !important;
+            box-shadow: 0 0 15px rgba(255, 65, 108, 0.1);
+        }
+
+        .choice-badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .quiz-choice:hover .choice-badge {
+            border-color: var(--accent-blue);
+        }
+
+        .quiz-choice.correct .choice-badge {
+            border-color: var(--success-glow);
+            background: var(--success-glow);
+            color: #0B0E14;
+        }
+
+        .quiz-choice.incorrect .choice-badge {
+            border-color: var(--error-glow);
+            background: var(--error-glow);
+            color: #fff;
+        }
+
+        .slide-footer {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color-dark);
+            padding-top: 1.5rem;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            border: none;
+            color: #0B0E14;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+            transition: all var(--transition-speed);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
+        }
+
+        .control-btn:disabled {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted-dark);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback-message {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s ease;
+        }
+
+        .feedback-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feedback-message.success {
+            color: var(--success-glow);
+        }
+
+        .feedback-message.error {
+            color: var(--error-glow);
+        }
+
+        /* ── Playground Transaction Simulator ── */
+        .playground-view {
+            background: var(--card-bg-dark);
+            border: 1px solid var(--border-color-dark);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .playground-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .playground-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-header {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color-dark);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            resize: none;
+            margin-bottom: 1rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        .preset-btns {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .preset-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color-dark);
+            color: var(--text-main-dark);
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-blue);
+        }
+
+        .pipeline-logs {
+            background: #07090D;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            height: 350px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-main-dark);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .log-line {
+            display: flex;
+            gap: 0.5rem;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: slideIn 0.3s forwards;
+        }
+
+        .log-time {
+            color: var(--text-muted-dark);
+            flex-shrink: 0;
+        }
+
+        .log-tag {
+            color: var(--accent-cyan);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .log-msg {
+            color: #E2E8F0;
+        }
+
+        .log-msg.success {
+            color: var(--success-glow);
+        }
+
+        .log-msg.error {
+            color: var(--error-glow);
+        }
+
+        .visualizer-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color-dark);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .witness-badge-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem 0;
+        }
+
+        .witness-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.5;
+            transition: all 0.3s;
+        }
+
+        .witness-node.active {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .witness-indicator {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-color-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-muted-dark);
+            transition: all 0.3s;
+        }
+
+        .witness-node.active .witness-indicator {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #0B0E14;
+            border-color: var(--success-glow);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+        }
+
+        .witness-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* ── Tab Switcher ── */
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted-dark);
+            padding: 0.5rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all var(--transition-speed);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">C</div>
+            <div class="logo-text">CONNEX Academy</div>
+        </div>
+        <nav style="display: flex; gap: 1rem;">
+            <button class="tab-btn active" onclick="switchView('dashboard')">Roadmap</button>
+            <button class="tab-btn" onclick="switchView('playground')">Transaction Lab</button>
+        </nav>
+        <div class="stats-bar">
+            <div class="stat-item">
+                🏆 Score: <span class="highlight" id="user-score">0</span> XP
+            </div>
+            <div class="stat-item">
+                Progress: <div class="xp-bar-container"><div class="xp-bar-fill" id="xp-bar"></div></div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- ── DASHBOARD VIEW ── -->
+        <div id="dashboard-view" class="dashboard-view">
+            <div class="welcome-hero">
+                <h1>Interactive Payments Coordination & Auditing</h1>
+                <p>Learn core concepts of distributed quorum coordination, transactional integrity, and compliance auditing in an interactive SoloLearn sandbox.</p>
+            </div>
+            
+            <div class="roadmap-container">
+                <div class="roadmap-line"></div>
+                
+                <!-- Chapter 1 -->
+                <div class="node-card left" onclick="startChapter(1)">
+                    <div class="node-icon-wrapper">📥</div>
+                    <div class="node-content">
+                        <h3>Chapter 1: Ingestion & Parsing</h3>
+                        <p>Learn how raw ISO 8583 payment messages are parsed and decoded safely.</p>
+                        <div class="node-status" id="node-status-1">▶️ Start (100 XP)</div>
+                    </div>
+                </div>
+
+                <!-- Chapter 2 -->
+                <div class="node-card right" id="chapter-node-2" onclick="startChapter(2)">
+                    <div class="node-badge">2-of-3 Quorum</div>
+                    <div class="node-icon-wrapper">🤝</div>
+                    <div class="node-content">
+                        <h3>Chapter 2: Quorum Architecture</h3>
+                        <p>Understand the distributed consensus model and witness validation nodes.</p>
+                        <div class="node-status" id="node-status-2">🔒 Locked</div>
+                    </div>
+                </div>
+
+                <!-- Chapter 3 -->
+                <div class="node-card left" id="chapter-node-3" onclick="startChapter(3)">
+                    <div class="node-icon-wrapper">🔗</div>
+                    <div class="node-content">
+                        <h3>Chapter 3: Coordination Hash Chain</h3>
+                        <p>Dive into tamper-proof append-only databases and hash linkages.</p>
+                        <div class="node-status" id="node-status-3">🔒 Locked</div>
+                    </div>
+                </div>
+
+                <!-- Chapter 4 -->
+                <div class="node-card right" id="chapter-node-4" onclick="startChapter(4)">
+                    <div class="node-badge">IP & Compliance</div>
+                    <div class="node-icon-wrapper">🛡️</div>
+                    <div class="node-content">
+                        <h3>Chapter 4: Security & Audit Compliance</h3>
+                        <p>How to protect repositories from leaked credentials and open-source lawsuits.</p>
+                        <div class="node-status" id="node-status-4">🔒 Locked</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── LESSON / SLIDE VIEW ── -->
+        <div id="lesson-view" class="lesson-view">
+            <div class="lesson-header">
+                <button class="back-btn" onclick="exitLesson()">← Back to Roadmap</button>
+                <div class="slide-progress" id="slide-progress-text">Slide 1 / 4</div>
+            </div>
+            
+            <div class="slide-card">
+                <div id="slide-content-area" class="slide-content">
+                    <!-- Dynamic Slide Content Inserted Here -->
+                </div>
+                
+                <div class="slide-footer">
+                    <div id="feedback-area" class="feedback-message"></div>
+                    <button class="control-btn" id="next-btn" onclick="nextSlide()">Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── PLAYGROUND VIEW (TRANSACTION SIMULATOR) ── -->
+        <div id="playground-view" class="playground-view" style="display: none;">
+            <div class="welcome-hero" style="margin: 0 auto 2rem auto;">
+                <h1>Transaction Coordination Simulator</h1>
+                <p>Ingest a mock ISO 8583 wire transfer, enrich it into ISO 20022 XML, collect witness signatures, and write to the append-only ledger.</p>
+            </div>
+            
+            <div class="playground-grid">
+                <div class="visualizer-card">
+                    <div class="panel-header">
+                        <span>Raw Ingestion (Base64 ISO 8583)</span>
+                        <span style="font-size: 0.85rem; color: var(--accent-cyan);">MTI: 0200</span>
+                    </div>
+                    
+                    <div class="preset-btns">
+                        <button class="preset-btn" onclick="loadPreset('kes')">KES 5,000 Transfer</button>
+                        <button class="preset-btn" onclick="loadPreset('usd')">USD 120 (Non-KES)</button>
+                        <button class="preset-btn" onclick="loadPreset('invalid')">Invalid Payload</button>
+                    </div>
+                    
+                    <textarea id="raw-payload-input" placeholder="Paste Base64 message here..."></textarea>
+                    
+                    <button class="control-btn" onclick="runSimulatedCoordinate()" style="width: 100%;">
+                        Coordinate Transaction
+                    </button>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">Witness Status Dashboard</h4>
+                        <div class="witness-badge-container">
+                            <div class="witness-node" id="w-node-1">
+                                <div class="witness-indicator">A</div>
+                                <span class="witness-label">Alpha</span>
+                            </div>
+                            <div class="witness-node" id="w-node-2">
+                                <div class="witness-indicator">B</div>
+                                <span class="witness-label">Beta</span>
+                            </div>
+                            <div class="witness-node" id="w-node-3">
+                                <div class="witness-indicator">G</div>
+                                <span class="witness-label">Gamma</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="visualizer-card">
+                    <div class="panel-header">
+                        <span>Pipeline Coordination logs</span>
+                        <span style="font-size: 0.85rem; color: var(--text-muted-dark);">Real-time</span>
+                    </div>
+                    
+                    <div class="pipeline-logs" id="pipeline-logs-box">
+                        <div class="log-line">
+                            <span class="log-time">[00:00:00]</span>
+                            <span class="log-tag">SYSTEM</span>
+                            <span class="log-msg">Ready to coordinate transactions. Select a preset or input payload.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Web Audio API Synth logic for sound feedback -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playChime(correct) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (correct) {
+                // Correct chime: Two sweet notes going up
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            } else {
+                // Incorrect: low buzz sliding down
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, now);
+                osc.frequency.linearRampToValueAtTime(80, now + 0.25);
+                gainNode.gain.setValueAtTime(0.12, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            }
+        }
+    </script>
+
+    <!-- Data Course Structure & Logic -->
+    <script>
+        const courseData = {
+            1: {
+                title: "Chapter 1: Ingestion & Parsing",
+                slides: [
+                    {
+                        type: "content",
+                        title: "The Problem of Legacy Settlement",
+                        html: `
+                            <p>Traditional banking networks use legacy protocols like <strong>ISO 8583</strong>. These messages are composed of flat raw byte buffers, often BCD-encoded, to maximize speed over ancient transmission lines.</p>
+                            <p>Because they lack rich semantic context (regulatory codes, specific transaction purposes), systems suffer from <strong>settlement opacity</strong>. This triggers high dispute rates and manual compliance overhead.</p>
+                            <div class="alert-box">
+                                <strong>CONNEX Invariant:</strong> To resolve this, the Gateway intercepts these raw messages and transforms them into modern, context-rich <strong>ISO 20022</strong> formats.
+                            </div>
+                        `
+                    },
+                    {
+                        type: "content",
+                        title: "Parsing ISO 8583 in Go",
+                        html: `
+                            <p>ISO 8583 messages consist of a 4-digit Message Type Identifier (MTI) and a 64-bit primary bitmap specifying which data fields are present in the stream.</p>
+                            <pre><code>// internal/iso8583/parser.go
+func Parse(raw []byte) (*Message, error) {
+    if len(raw) &lt; 12 {
+        return nil, fmt.Errorf("message too short")
+    }
+    // Read MTI
+    mti := string(raw[0:4])
+    // Read bitmap to scan active fields...
+}</code></pre>
+                            <p>The parser dynamically extracts values depending on alignment definitions (Fixed length vs variable length e.g. LLVAR or LLLVAR).</p>
+                        `
+                    },
+                    {
+                        type: "quiz",
+                        title: "Concept Check: ISO 8583 Standard",
+                        question: "Why do legacy payment messages like ISO 8583 cause high compliance friction in modern banking?",
+                        choices: [
+                            "They are strictly binary and cannot be read by computers.",
+                            "They lack rich semantic structure and regulatory reporting context.",
+                            "They do not support numeric transaction fields.",
+                            "They require high-speed fiber-optic lines to transmit."
+                        ],
+                        correctIndex: 1
+                    }
+                ]
+            },
+            2: {
+                title: "Chapter 2: Quorum Architecture",
+                slides: [
+                    {
+                        type: "content",
+                        title: "Witness Verification Model",
+                        html: `
+                            <p>To eliminate centralized point-of-failure vulnerabilities, CONNEX implements a <strong>Distributed Quorum Architecture</strong>.</p>
+                            <p>The Gateway does not sign or validate transactions on its own. Instead, it relies on three independent <strong>Witness Nodes</strong> (Alpha, Beta, and Gamma), each managing its own Ed25519 cryptographic keypair.</p>
+                            <div class="alert-box">
+                                <strong>Quorum Policy:</strong> At least <strong>2 out of 3</strong> witnesses must successfully return verified signatures on the coordination hash to approve the transaction.
+                            </div>
+                        `
+                    },
+                    {
+                        type: "content",
+                        title: "Witness Communication",
+                        html: `
+                            <p>When the Gateway computes the transaction fingerprint, it distributes signing requests in parallel to all witness nodes over HTTP POST endpoints.</p>
+                            <pre><code>// cmd/gateway/main.go
+func collectSignatures(witnesses []string, hashBytes []byte) []SignatureEntry {
+    ch := make(chan result, len(witnesses))
+    for _, w := range witnesses {
+        go func() {
+            sig, err := requestSignature(w, hashBytes)
+            ch &lt;- result{sig, err}
+        }()
+    }
+    // Collect with a tight 150ms timeout...
+}</code></pre>
+                            <p>Using Go channels ensures the main routing thread never blocks indefinitely on slow witness nodes.</p>
+                        `
+                    },
+                    {
+                        type: "quiz",
+                        title: "Concept Check: Quorum Policy",
+                        question: "What is the primary benefit of a 2-of-3 witness consensus policy in a payment system?",
+                        choices: [
+                            "It speeds up transaction throughput by running multiple database queries.",
+                            "It ensures the system remains fully functional and secure even if one witness is down or compromised.",
+                            "It automatically encrypts the data using AES-256.",
+                            "It blocks transactions that have large amounts."
+                        ],
+                        correctIndex: 1
+                    }
+                ]
+            },
+            3: {
+                title: "Chapter 3: Coordination Hash Chain",
+                slides: [
+                    {
+                        type: "content",
+                        title: "The Coordination Hash",
+                        html: `
+                            <p>To prevent transactions from being modified retroactively, CONNEX seals every event into an unbroken hash chain.</p>
+                            <p>The <strong>Coordination Hash</strong> acts as the unique cryptographic identifier for the event, computed as:</p>
+                            <pre><code>chainHash = SHA-256(originalHash + enrichedHash + prevChainHash)</code></pre>
+                            <p>If any historical transaction is altered, its enriched hash changes, invalidating every downstream chain hash in the ledger.</p>
+                        `
+                    },
+                    {
+                        type: "content",
+                        title: "Append-Only SQL Triggers",
+                        html: `
+                            <p>To secure the database ledger, SQLite triggers block modifications at the database engine level. This makes data corruption or alteration impossible, even if the database layer is accessed directly.</p>
+                            <pre><code>-- internal/storage/schema.sql
+CREATE TRIGGER no_update
+BEFORE UPDATE ON coordination_events
+BEGIN
+    SELECT RAISE(ABORT, 'coordination_events is append-only: UPDATE rejected');
+END;</code></pre>
+                            <div class="alert-box warning">
+                                <strong>Immutable Rule:</strong> Triggers block both <code>UPDATE</code> and <code>DELETE</code> operations, making the record permanently audit-safe.
+                            </div>
+                        `
+                    },
+                    {
+                        type: "quiz",
+                        title: "Concept Check: Chain and Triggers",
+                        question: "If a database administrator attempts to manually run 'DELETE FROM coordination_events' on the database, what will occur?",
+                        choices: [
+                            "The database will delete the records and recalculate the hashes.",
+                            "The execution will succeed but log an alert in the audit log.",
+                            "The transaction will abort and reject the query due to the database trigger.",
+                            "The database file will become corrupted."
+                        ],
+                        correctIndex: 2
+                    }
+                ]
+            },
+            4: {
+                title: "Chapter 4: Security & Audit Compliance",
+                slides: [
+                    {
+                        type: "content",
+                        title: "Secret Leakage & Repository Hygiene",
+                        html: `
+                            <p>Payment systems must guard against code leaks and vulnerabilities to avoid devastating intellectual property and compliance lawsuits.</p>
+                            <div class="alert-box warning">
+                                <strong>Critical Risk: Leaking Secrets</strong><br>
+                                Committing raw cryptographic private keys (like <code>.key</code> files) to a repository can allow attackers to spoof nodes. Under regulatory frameworks, this negligence can trigger multi-million dollar class-action lawsuits.
+                            </div>
+                            <p>Always add credentials, certificates, and mock environment settings to <code>.gitignore</code> and use dynamic generation or hardware security modules (HSM) in production.</p>
+                        `
+                    },
+                    {
+                        type: "content",
+                        title: "Software Licensing & Disclaimers",
+                        html: `
+                            <p>When sharing code, the presence of a formal <strong>LICENSE</strong> file is not optional. A standard license (like Apache 2.0) contains critical legal disclaimers:</p>
+                            <pre><code>Disclaimer of Warranty: Licensor provides the Work on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND...
+Limitation of Liability: In no event shall any Contributor be liable for damages...</code></pre>
+                            <p>These clauses prevent developers from being sued for damages if users run the software and suffer monetary loss.</p>
+                        `
+                    },
+                    {
+                        type: "quiz",
+                        title: "Concept Check: Legal Auditing",
+                        question: "What is the legal purpose of a 'Limitation of Liability' clause in a project's LICENSE file?",
+                        choices: [
+                            "It forbids third parties from modifying the source code.",
+                            "It shields the software developers from lawsuits if a user incurs damages or financial losses from running the software.",
+                            "It guarantees the software has zero security vulnerabilities.",
+                            "It registers the software as a patent with the government."
+                        ],
+                        correctIndex: 1
+                    }
+                ]
+            }
+        };
+
+        // User State
+        let userXP = 0;
+        let completedChapters = {
+            1: false,
+            2: false,
+            3: false,
+            4: false
+        };
+        
+        // Active Lesson State
+        let currentChapterId = null;
+        let currentSlideIndex = 0;
+        let currentSelectedAnswer = null;
+
+        // Initialize App
+        updateXPDisplay();
+
+        function updateXPDisplay() {
+            document.getElementById('user-score').innerText = userXP;
+            
+            // Progress Bar calculation
+            let totalChapters = 4;
+            let finishedCount = Object.values(completedChapters).filter(v => v).length;
+            let percentage = (finishedCount / totalChapters) * 100;
+            document.getElementById('xp-bar').style.width = percentage + '%';
+        }
+
+        function switchView(viewName) {
+            document.querySelectorAll('main > div').forEach(div => {
+                div.style.display = 'none';
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (viewName === 'dashboard') {
+                document.getElementById('dashboard-view').style.display = 'flex';
+                document.querySelector('button[onclick="switchView(\'dashboard\')"]').classList.add('active');
+            } else if (viewName === 'playground') {
+                document.getElementById('playground-view').style.display = 'block';
+                document.querySelector('button[onclick="switchView(\'playground\')"]').classList.add('active');
+            }
+        }
+
+        function startChapter(chapterId) {
+            if (chapterId > 1 && !completedChapters[chapterId - 1]) {
+                alert("Chapter locked! Complete previous chapters first.");
+                return;
+            }
+            
+            currentChapterId = chapterId;
+            currentSlideIndex = 0;
+            
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('lesson-view').style.display = 'block';
+            
+            loadSlide();
+        }
+
+        function exitLesson() {
+            document.getElementById('lesson-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'flex';
+        }
+
+        function loadSlide() {
+            const chapter = courseData[currentChapterId];
+            const slide = chapter.slides[currentSlideIndex];
+            
+            document.getElementById('slide-progress-text').innerText = `Slide ${currentSlideIndex + 1} / ${chapter.slides.length}`;
+            
+            const contentArea = document.getElementById('slide-content-area');
+            const feedbackArea = document.getElementById('feedback-area');
+            feedbackArea.className = 'feedback-message';
+            feedbackArea.innerHTML = '';
+            
+            currentSelectedAnswer = null;
+            
+            let htmlContent = `<h2>${slide.title}</h2>`;
+            
+            if (slide.type === "content") {
+                htmlContent += slide.html;
+                document.getElementById('next-btn').innerText = "Continue";
+                document.getElementById('next-btn').disabled = false;
+            } else if (slide.type === "quiz") {
+                htmlContent += `<p>${slide.question}</p><div class="quiz-container">`;
+                slide.choices.forEach((choice, idx) => {
+                    htmlContent += `
+                        <button class="quiz-choice" onclick="selectChoice(${idx})">
+                            <div class="choice-badge">${String.fromCharCode(65 + idx)}</div>
+                            <span>${choice}</span>
+                        </button>
+                    `;
+                });
+                htmlContent += `</div>`;
+                document.getElementById('next-btn').innerText = "Submit Answer";
+                document.getElementById('next-btn').disabled = true;
+            }
+            
+            contentArea.innerHTML = htmlContent;
+        }
+
+        function selectChoice(choiceIndex) {
+            const slide = courseData[currentChapterId].slides[currentSlideIndex];
+            if (currentSelectedAnswer !== null) return; // Answer already submitted
+            
+            const choices = document.querySelectorAll('.quiz-choice');
+            choices.forEach((choice, idx) => {
+                choice.classList.remove('selected');
+                if (idx === choiceIndex) {
+                    choice.style.borderColor = 'var(--accent-cyan)';
+                    choice.style.background = 'rgba(255, 255, 255, 0.05)';
+                } else {
+                    choice.style.borderColor = 'var(--border-color-dark)';
+                    choice.style.background = 'rgba(255, 255, 255, 0.02)';
+                }
+            });
+            
+            currentSelectedAnswer = choiceIndex;
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextSlide() {
+            const chapter = courseData[currentChapterId];
+            const slide = chapter.slides[currentSlideIndex];
+            
+            if (slide.type === "quiz" && document.getElementById('next-btn').innerText === "Submit Answer") {
+                // Validate quiz answer
+                const choices = document.querySelectorAll('.quiz-choice');
+                const feedbackArea = document.getElementById('feedback-area');
+                
+                if (currentSelectedAnswer === slide.correctIndex) {
+                    choices[currentSelectedAnswer].classList.add('correct');
+                    feedbackArea.className = 'feedback-message success show';
+                    feedbackArea.innerHTML = '✨ Correct! +100 XP';
+                    playChime(true);
+                    userXP += 100;
+                    updateXPDisplay();
+                } else {
+                    choices[currentSelectedAnswer].classList.add('incorrect');
+                    choices[slide.correctIndex].classList.add('correct');
+                    feedbackArea.className = 'feedback-message error show';
+                    feedbackArea.innerHTML = '❌ Incorrect. Try again!';
+                    playChime(false);
+                }
+                
+                document.getElementById('next-btn').innerText = "Continue";
+                return;
+            }
+            
+            // Advance slide
+            currentSlideIndex++;
+            
+            if (currentSlideIndex < chapter.slides.length) {
+                loadSlide();
+            } else {
+                // Chapter finished!
+                completedChapters[currentChapterId] = true;
+                unlockNextChapter(currentChapterId);
+                exitLesson();
+                updateXPDisplay();
+            }
+        }
+
+        function unlockNextChapter(chapterId) {
+            const nextId = chapterId + 1;
+            const statusEl = document.getElementById(`node-status-${chapterId}`);
+            if (statusEl) {
+                statusEl.innerText = "⭐ Completed";
+                statusEl.style.color = "var(--success-glow)";
+            }
+            
+            const nextNode = document.getElementById(`chapter-node-${nextId}`);
+            if (nextNode) {
+                nextNode.classList.remove('locked');
+                const nextStatus = document.getElementById(`node-status-${nextId}`);
+                nextStatus.innerText = "▶️ Start (100 XP)";
+                nextStatus.style.color = "var(--accent-cyan)";
+            }
+        }
+
+        // Preset transactional payloads
+        const presets = {
+            kes: "TURJPTIwMCxGND0wMDAwMDAwMDUwMDAsRjQ5PTQwNCxGMz0wMTAxMDAsRjE4PTU0MTEsRjMyPTExMTExMSxGMzM9MjIyMjIyLEYxMDI9MTIzNDU2Nzg5LEYxMDM9OTg3NjU0MzIx",
+            usd: "TURJPTIwMCxGND0wMDAwMDAwMTIwMDAsRjQ5PTg0MCxGMz0wMTAxMDAsRjE4PTU4MTIsRjMyPTExMTExMSxGMzM9MTExMTExLEYxMDI9OTk5OTk5OTk5LEYxMDM9ODg4ODg4ODg4",
+            invalid: "TURJPTEyMzQsRjQ9YWJj"
+        };
+
+        function loadPreset(presetKey) {
+            document.getElementById('raw-payload-input').value = presets[presetKey];
+        }
+
+        // Simulate core coordination steps
+        function runSimulatedCoordinate() {
+            const inputVal = document.getElementById('raw-payload-input').value.trim();
+            const logsBox = document.getElementById('pipeline-logs-box');
+            
+            // Reset visual active witness states
+            document.querySelectorAll('.witness-node').forEach(node => node.classList.remove('active'));
+            
+            logsBox.innerHTML = '';
+            
+            if (!inputVal) {
+                writeLog("SYSTEM", "Error: Input payload empty.", "error");
+                return;
+            }
+            
+            let timeOffset = 100;
+            
+            function scheduleLog(tag, msg, style, fn) {
+                setTimeout(() => {
+                    writeLog(tag, msg, style);
+                    if (fn) fn();
+                }, timeOffset);
+                timeOffset += 600;
+            }
+            
+            scheduleLog("INGESTION", "Received POST /v1/coordinate. Decoding Base64 ISO 8583 payload...");
+            
+            // Simulate Decode
+            try {
+                const decoded = atob(inputVal);
+                scheduleLog("PARSER", `Successfully decoded. Message details: ${decoded}`);
+                
+                // Parse key fields (simulated parsing)
+                const fields = {};
+                decoded.split(',').forEach(part => {
+                    const kv = part.split('=');
+                    fields[kv[0]] = kv[1];
+                });
+                
+                const mti = fields['MTI'] || 'Unknown';
+                const amount = parseInt(fields['F4'] || '0') / 100;
+                const currency = fields['F49'] || '404';
+                const mcc = fields['F18'] || 'Unknown';
+                
+                scheduleLog("PARSER", `Detected Message Type Identifier (MTI): ${mti}. Fields count: ${Object.keys(fields).length}`);
+                
+                // Run Rules
+                scheduleLog("RULES ENGINE", `Running rules.yaml rules for mcc=${mcc}, currency=${currency}...`);
+                
+                let ruleId = "DEFAULT";
+                let purposeCode = "GDDS";
+                let regulatoryReporting = "100";
+                
+                if (mcc === "5411") {
+                    ruleId = "MCC_5411_GROCERY";
+                    purposeCode = "GDSV";
+                    regulatoryReporting = "120";
+                } else if (mcc === "5812") {
+                    ruleId = "MCC_5812_DINING";
+                    purposeCode = "REST";
+                    regulatoryReporting = "150";
+                }
+                
+                scheduleLog("RULES ENGINE", `Matched enrichment Rule ID: ${ruleId}. Purpose set to ${purposeCode}.`);
+                
+                // XML assembler
+                scheduleLog("ASSEMBLER", `Generating pacs.008.001.08 XML document. Validating schema constraints...`);
+                
+                const xmlTemplate = `
+&lt;Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.008.001.08"&gt;
+  &lt;GrpHdr&gt;
+    &lt;MsgId&gt;CX-SIMULATOR-${Date.now()}&lt;/MsgId&gt;
+    &lt;SttlmInf&gt;&lt;SttlmMtd&gt;CLRG&lt;/SttlmMtd&gt;&lt;/SttlmInf&gt;
+  &lt;/GrpHdr&gt;
+  &lt;CdtTrfTxInf&gt;
+    &lt;IntrBkSttlmAmt Ccy="${currency === '840' ? 'USD' : 'KES'}"&gt;${amount.toFixed(2)}&lt;/IntrBkSttlmAmt&gt;
+    &lt;PmtTpInf&gt;&lt;CtgyPurp&gt;&lt;Cd&gt;${purposeCode}&lt;/Cd&gt;&lt;/CtgyPurp&gt;&lt;/PmtTpInf&gt;
+  &lt;/CdtTrfTxInf&gt;
+&lt;/Document&gt;`.trim();
+
+                scheduleLog("ASSEMBLER", `XML Output schema well-formed and valid.`, "success");
+                
+                // Hash link
+                const origHash = "SHA256_ORIG_" + Math.random().toString(36).substring(7);
+                const enrichedHash = "SHA256_ENR_" + Math.random().toString(36).substring(7);
+                const prevHash = "SHA256_PREV_" + Math.random().toString(36).substring(7);
+                const coordHash = "SHA256_COORD_" + Math.random().toString(36).substring(7);
+                
+                scheduleLog("CRYPTO", `Computed coordination hash: ${coordHash.substring(0, 16)}...`);
+                
+                // Query Witnesses
+                scheduleLog("QUORUM", `Dispatching parallel signatures to witness nodes...`);
+                
+                setTimeout(() => {
+                    document.getElementById('w-node-1').classList.add('active');
+                    writeLog("WITNESS ALPHA", "Signature verified (Ed25519 public key fingerprint: Alpha-fp12)", "success");
+                }, timeOffset + 200);
+                
+                setTimeout(() => {
+                    document.getElementById('w-node-2').classList.add('active');
+                    writeLog("WITNESS BETA", "Signature verified (Ed25519 public key fingerprint: Beta-fp34)", "success");
+                }, timeOffset + 400);
+
+                setTimeout(() => {
+                    document.getElementById('w-node-3').classList.add('active');
+                    writeLog("WITNESS GAMMA", "Signature verified (Ed25519 public key fingerprint: Gamma-fp56)", "success");
+                }, timeOffset + 600);
+
+                timeOffset += 800;
+                
+                scheduleLog("QUORUM", `3 of 3 signatures gathered successfully. Quorum met. Status: QUORUM_MET`, "success");
+                
+                // Write to SQLite
+                scheduleLog("DATABASE", `Writing Event Ledger bundle to SQLite. Executing INSERT statement...`);
+                scheduleLog("DATABASE", `Ledger update complete. Trigger checked: Insert accepted (append-only safe).`, "success");
+                
+                // Return Success
+                scheduleLog("SYSTEM", `Coordination success. Status: 200 OK. Returns Proof Bundle JSON.`, "success");
+                
+            } catch (e) {
+                scheduleLog("SYSTEM", `Failed to parse base64 payload. Reason: ${e.message}`, "error");
+            }
+        }
+
+        function writeLog(tag, msg, style) {
+            const logsBox = document.getElementById('pipeline-logs-box');
+            const now = new Date().toLocaleTimeString();
+            
+            const logLine = document.createElement('div');
+            logLine.className = 'log-line';
+            
+            let messageStyle = 'log-msg';
+            if (style === 'success') messageStyle += ' success';
+            if (style === 'error') messageStyle += ' error';
+            
+            logLine.innerHTML = `
+                <span class="log-time">[${now}]</span>
+                <span class="log-tag">${tag}</span>
+                <span class="${messageStyle}">${msg}</span>
+            `;
+            
+            logsBox.appendChild(logLine);
+            logsBox.scrollTop = logsBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
