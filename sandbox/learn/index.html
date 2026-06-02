@@ -3,40 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONNEX Developer Academy</title>
+    <title>CONNEX Academy</title>
     <!-- Google Fonts: Plus Jakarta Sans for headers, Inter for body, JetBrains Mono for code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     
+    <!-- SQL.js WebAssembly library from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/sql-wasm.js"></script>
+
     <style>
         :root {
-            --bg-primary: #08090C;
-            --bg-secondary: #0F111A;
-            --panel-bg: #141722;
-            --border-color: #1F2436;
-            --border-hover: #333B56;
+            --bg-body: #F0F4FA;
+            --bg-card: #FFFFFF;
+            --border-color: rgba(226, 232, 240, 0.9);
             
-            --text-primary: #F8FAFC;
-            --text-secondary: #94A3B8;
-            --text-muted: #64748B;
+            --text-main: #1E293B;
+            --text-secondary: #475569;
+            --text-muted: #94A3B8;
             
-            --accent: #38BDF8;
-            --accent-glow: rgba(56, 189, 248, 0.15);
-            --success: #34D399;
-            --success-glow: rgba(52, 211, 153, 0.1);
-            --error: #F87171;
-            --error-glow: rgba(248, 113, 113, 0.1);
+            --blue-primary: #0070F3;
+            --blue-light: #EBF5FF;
+            --blue-glow: rgba(0, 112, 243, 0.15);
             
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --font-display: 'Plus Jakarta Sans', var(--font-sans);
+            --success: #10B981;
+            --success-glow: rgba(16, 185, 129, 0.08);
+            --error: #EF4444;
+            --error-glow: rgba(239, 68, 68, 0.08);
+            
+            --font-sans: 'Inter', sans-serif;
+            --font-display: 'Plus Jakarta Sans', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
             
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
             
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Premium Claymorphism Shadow Tokens */
+            --clay-shadow-card: 
+                9px 9px 16px rgba(163, 177, 198, 0.3), 
+                -9px -9px 16px rgba(255, 255, 255, 1),
+                inset 3px 3px 7px rgba(255, 255, 255, 0.8),
+                inset -3px -3px 7px rgba(163, 177, 198, 0.08);
+                
+            --clay-shadow-btn: 
+                4px 4px 8px rgba(0, 112, 243, 0.2),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.45),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.15);
+                
+            --clay-shadow-btn-light: 
+                4px 4px 8px rgba(163, 177, 198, 0.25),
+                -4px -4px 8px rgba(255, 255, 255, 1),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+                inset -2px -2px 4px rgba(163, 177, 198, 0.05);
+                
+            --clay-shadow-inset:
+                inset 3px 3px 6px rgba(163, 177, 198, 0.25),
+                inset -3px -3px 6px rgba(255, 255, 255, 1);
         }
 
         * {
@@ -46,38 +68,38 @@
         }
 
         body {
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
+            background-color: var(--bg-body);
+            color: var(--text-main);
             font-family: var(--font-sans);
-            line-height: 1.6;
+            line-height: 1.5;
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* ── Scrollbars ── */
+        /* Custom scrollbars */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
+            background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
+            background: #CBD5E1;
             border-radius: 3px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--border-hover);
+            background: #94A3B8;
         }
 
         /* ── Header ── */
         header {
-            background: rgba(8, 9, 12, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border-color);
-            padding: 1.25rem 2rem;
+            padding: 0.75rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -91,24 +113,28 @@
             align-items: center;
             gap: 0.75rem;
             text-decoration: none;
-            color: inherit;
         }
 
-        .logo-svg {
-            color: var(--text-primary);
-            flex-shrink: 0;
+        .logo-img {
+            height: 28px;
+            object-fit: contain;
         }
 
         .logo-title {
             font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.25rem;
+            font-weight: 800;
+            font-size: 1.1rem;
             letter-spacing: -0.5px;
+            color: var(--text-main);
         }
 
         .nav-tabs {
             display: flex;
-            gap: 1.5rem;
+            gap: 0.75rem;
+            background: rgba(226, 232, 240, 0.6);
+            padding: 0.25rem;
+            border-radius: 12px;
+            box-shadow: var(--clay-shadow-inset);
         }
 
         .tab-trigger {
@@ -116,46 +142,71 @@
             border: none;
             color: var(--text-secondary);
             font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 0.8rem;
             cursor: pointer;
-            padding: 0.5rem 0;
-            border-bottom: 2px solid transparent;
-            transition: var(--transition);
-        }
-
-        .tab-trigger:hover {
-            color: var(--text-primary);
+            padding: 0.4rem 1.1rem;
+            border-radius: 9px;
+            transition: all 0.15s;
         }
 
         .tab-trigger.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
+            background: #FFFFFF;
+            color: var(--blue-primary);
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         .progress-stats {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            gap: 0.75rem;
+        }
+
+        .sqlite-badge {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.35rem 0.65rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: var(--clay-shadow-btn-light);
+        }
+
+        .sqlite-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .sqlite-badge.active .sqlite-status-dot {
+            background: var(--success);
+            box-shadow: 0 0 6px var(--success);
         }
 
         .xp-count {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: 0.4rem 0.8rem;
+            background: var(--blue-light);
+            border-radius: 10px;
+            padding: 0.35rem 0.75rem;
             font-family: var(--font-mono);
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--blue-primary);
+            box-shadow: inset 1px 1px 3px rgba(0, 112, 243, 0.05);
         }
 
-        /* ── Layout Grid ── */
+        /* ── Workspace Layout ── */
         .workspace {
             flex: 1;
             display: grid;
-            grid-template-columns: 320px 1fr;
-            height: calc(100vh - 71px);
+            grid-template-columns: 260px 1fr;
+            height: calc(100vh - 53px);
         }
 
         @media (max-width: 1024px) {
@@ -165,258 +216,306 @@
             }
         }
 
-        /* ── Sidebar (Roadmap & Lessons) ── */
+        /* ── Sidebar Roadmap ── */
         .sidebar {
-            background: var(--bg-secondary);
+            background: #FFFFFF;
             border-right: 1px solid var(--border-color);
             overflow-y: auto;
-            padding: 1.5rem;
+            padding: 1.25rem;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
         @media (max-width: 1024px) {
             .sidebar {
                 border-right: none;
                 border-bottom: 1px solid var(--border-color);
-                max-height: 300px;
+                max-height: 200px;
             }
         }
 
         .sidebar-title {
             font-family: var(--font-display);
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.7rem;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             color: var(--text-muted);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .roadmap-node {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
+            background: var(--bg-card);
             border-radius: var(--radius-md);
-            padding: 1rem;
+            padding: 0.65rem 0.85rem;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-            position: relative;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--clay-shadow-btn-light);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .roadmap-node:hover:not(.locked) {
-            border-color: var(--border-hover);
-            transform: translateX(4px);
+            transform: translateY(-2px);
+            border-color: rgba(0, 112, 243, 0.25);
         }
 
         .roadmap-node.active {
-            border-color: var(--accent);
-            box-shadow: 0 0 12px var(--accent-glow);
+            border-color: var(--blue-primary);
+            background: var(--blue-light);
+            box-shadow: var(--clay-shadow-inset);
         }
 
         .roadmap-node.locked {
             opacity: 0.45;
             cursor: not-allowed;
+            box-shadow: none;
+            background: rgba(226, 232, 240, 0.4);
+            border-color: transparent;
         }
 
-        .node-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .node-title {
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .node-index {
             font-family: var(--font-mono);
             font-size: 0.75rem;
-            font-weight: 700;
             color: var(--text-muted);
+            margin-right: 0.4rem;
         }
 
-        .roadmap-node.active .node-index {
-            color: var(--accent);
-        }
-
-        .node-status-icon {
+        .node-status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background: var(--text-muted);
+            flex-shrink: 0;
+            margin-left: 0.5rem;
         }
 
-        .roadmap-node.completed .node-status-icon {
+        .roadmap-node.completed .node-status-dot {
             background: var(--success);
-            box-shadow: 0 0 8px var(--success);
+            box-shadow: 0 0 6px var(--success);
         }
 
-        .roadmap-node.active .node-status-icon {
-            background: var(--accent);
-            box-shadow: 0 0 8px var(--accent);
+        .roadmap-node.active .node-status-dot {
+            background: var(--blue-primary);
+            box-shadow: 0 0 6px var(--blue-primary);
         }
 
-        .node-title {
-            font-family: var(--font-display);
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .node-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        /* ── Content Pane ── */
+        /* ── Content Area ── */
         .content-pane {
+            height: 100%;
             overflow-y: auto;
-            padding: 2.5rem;
+            padding: 1.5rem;
             display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
+            justify-content: center;
+            align-items: center;
         }
 
-        .slide-container {
+        .academy-layout {
+            display: flex;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1100px;
+            align-items: stretch;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .slide-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            width: 100%;
+            box-shadow: var(--clay-shadow-card);
+            border: 1px solid rgba(255, 255, 255, 0.7);
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            animation: slideIn 0.25s ease-out;
+            gap: 1rem;
+            transition: all 0.3s ease;
         }
 
         .chapter-header {
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
+            padding-bottom: 0.5rem;
         }
 
-        .chapter-subtitle {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--accent);
-            text-transform: uppercase;
-        }
-
-        .chapter-title {
+        .chapter-title-text {
             font-family: var(--font-display);
-            font-size: 2rem;
+            font-size: 0.7rem;
             font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        /* ── Typography & Components ── */
-        p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .analogy-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-left: 4px solid var(--text-secondary);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-        }
-
-        .analogy-title {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--text-primary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
+            color: var(--blue-primary);
         }
 
-        .code-explanation {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .explanation-line {
-            display: grid;
-            grid-template-columns: 180px 1fr;
-            gap: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 0.75rem;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 640px) {
-            .explanation-line {
-                grid-template-columns: 1fr;
-                gap: 0.25rem;
-            }
-        }
-
-        .explanation-key {
+        .slide-progress {
             font-family: var(--font-mono);
-            color: var(--accent);
-            font-weight: 600;
+            font-size: 0.7rem;
+            color: var(--text-muted);
         }
 
-        .explanation-val {
+        .slide-body h2 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+
+        .slide-body p {
+            font-size: 0.85rem;
             color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
         }
 
-        .ask-why {
-            background: rgba(56, 189, 248, 0.03);
-            border: 1px solid rgba(56, 189, 248, 0.15);
+        .analogy-box {
+            background: var(--blue-light);
             border-radius: var(--radius-md);
-            padding: 1.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            border-left: 4px solid var(--blue-primary);
+            box-shadow: inset 1px 1px 3px rgba(0, 112, 243, 0.03);
+            margin-top: 0.5rem;
+        }
+
+        .analogy-label {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--blue-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        /* ── Code Box ── */
+        .code-block {
+            background: #FAF8F5;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.65rem 0.85rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-main);
+            line-height: 1.45;
+            margin: 0.5rem 0;
+            box-shadow: var(--clay-shadow-inset);
+        }
+
+        /* ── Quiz Box ── */
+        .quiz-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+        }
+
+        .choice-item {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-align: left;
+            width: 100%;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            color: var(--text-main);
+            font-weight: 600;
+            box-shadow: var(--clay-shadow-btn-light);
+        }
+
+        .choice-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--blue-primary);
+            box-shadow: var(--clay-shadow-btn-light), 0 4px 8px rgba(0, 112, 243, 0.05);
+        }
+
+        .choice-bullet {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .choice-item.correct {
+            background: #ECFDF5 !important;
+            border-color: var(--success) !important;
+            box-shadow: inset 2px 2px 4px rgba(16, 185, 129, 0.05) !important;
+        }
+
+        .choice-item.correct .choice-bullet {
+            background: var(--success);
+            border-color: var(--success);
+            color: #FFFFFF;
+        }
+
+        .choice-item.incorrect {
+            background: #FEF2F2 !important;
+            border-color: var(--error) !important;
+            box-shadow: inset 2px 2px 4px rgba(239, 68, 68, 0.05) !important;
+        }
+
+        .choice-item.incorrect .choice-bullet {
+            background: var(--error);
+            border-color: var(--error);
+            color: #FFFFFF;
+        }
+
+        /* ── Code Editor ── */
+        .editor-pane {
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            width: 100%;
+            transition: all 0.3s ease;
         }
 
-        .ask-why-title {
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: var(--accent);
-        }
-
-        .ask-why-q {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-        }
-
-        .ask-why-a {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* ── Code Playground / Editor ── */
         .editor-container {
             display: flex;
             flex-direction: column;
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            background: #0D0E15;
+            border-radius: 20px;
+            background: #FFFFFF;
             overflow: hidden;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35);
+            box-shadow: var(--clay-shadow-card);
         }
 
         .editor-header {
-            background: #08090C;
+            background: rgba(250, 251, 253, 0.9);
             border-bottom: 1px solid var(--border-color);
-            padding: 0.75rem 1.25rem;
+            padding: 0.5rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -424,30 +523,28 @@
 
         .editor-title {
             font-family: var(--font-mono);
-            font-size: 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 700;
             color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .editor-body {
             display: flex;
-            position: relative;
-            min-height: 250px;
+            min-height: 180px;
+            height: 220px;
         }
 
         .line-numbers {
-            width: 45px;
-            padding: 1rem 0;
+            width: 32px;
+            padding: 0.75rem 0;
             border-right: 1px solid var(--border-color);
             text-align: right;
-            padding-right: 0.75rem;
+            padding-right: 0.5rem;
             color: var(--text-muted);
             font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             user-select: none;
-            background: #0A0B10;
+            background: #FAFBFD;
         }
 
         .editor-textarea {
@@ -455,208 +552,140 @@
             background: none;
             border: none;
             resize: none;
-            padding: 1rem;
-            color: #E2E8F0;
+            padding: 0.75rem;
+            color: var(--text-main);
             font-family: var(--font-mono);
-            font-size: 0.9rem;
-            line-height: 1.5;
+            font-size: 0.75rem;
+            line-height: 1.45;
             outline: none;
+            white-space: pre;
+            overflow-x: auto;
         }
 
         .editor-footer {
-            background: #08090C;
+            background: #FAFBFD;
             border-top: 1px solid var(--border-color);
-            padding: 0.75rem 1.25rem;
+            padding: 0.4rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .console-output {
-            background: #050608;
-            border-top: 1px solid var(--border-color);
-            padding: 1rem 1.25rem;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            min-height: 80px;
-            max-height: 160px;
-            overflow-y: auto;
-            color: var(--text-secondary);
-        }
-
-        .console-line {
-            margin-bottom: 0.25rem;
-            white-space: pre-wrap;
-        }
-
-        .console-line.success {
-            color: var(--success);
-        }
-
-        .console-line.error {
-            color: var(--error);
-        }
-
-        /* ── Interactive Quiz & Choices ── */
-        .quiz-box {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            margin-top: 1rem;
-        }
-
-        .choice-item {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.25rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            text-align: left;
-            width: 100%;
-        }
-
-        .choice-item:hover {
-            border-color: var(--border-hover);
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .choice-bullet {
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 1px solid var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #0F172A;
+            color: #E2E8F0;
+            padding: 0.65rem 0.85rem;
             font-family: var(--font-mono);
             font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-secondary);
-            flex-shrink: 0;
+            border-radius: 16px;
+            border: 1px solid rgba(15, 23, 42, 0.15);
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.4);
+            line-height: 1.4;
         }
 
-        .choice-item.correct {
-            background: var(--success-glow) !important;
-            border-color: var(--success) !important;
-        }
+        .console-line.success { color: var(--success); }
+        .console-line.error { color: #FCA5A5; }
 
-        .choice-item.correct .choice-bullet {
-            background: var(--success);
-            border-color: var(--success);
-            color: var(--bg-primary);
-        }
-
-        .choice-item.incorrect {
-            background: var(--error-glow) !important;
-            border-color: var(--error) !important;
-        }
-
-        .choice-item.incorrect .choice-bullet {
-            background: var(--error);
-            border-color: var(--error);
-            color: var(--text-primary);
-        }
-
-        /* ── Controls & Actions ── */
+        /* ── Buttons ── */
         .btn-group {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 2rem;
             border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
+            padding-top: 0.75rem;
+            margin-top: auto;
         }
 
         .btn {
             font-family: var(--font-display);
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 0.6rem 1.5rem;
-            border-radius: var(--radius-sm);
+            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 0.45rem 1.1rem;
+            border-radius: 12px;
             cursor: pointer;
-            transition: var(--transition);
-            border: 1px solid transparent;
+            border: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-primary {
-            background: var(--text-primary);
-            color: var(--bg-primary);
+            background: var(--blue-primary);
+            color: #FFFFFF;
+            box-shadow: var(--clay-shadow-btn);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.9);
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 
+                6px 6px 12px rgba(0, 112, 243, 0.35),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.5),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 
+                2px 2px 4px rgba(0, 112, 243, 0.15),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.4),
+                inset 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .btn-primary:disabled {
-            background: var(--border-color);
-            color: var(--text-muted);
+            background: var(--text-muted);
+            opacity: 0.6;
+            box-shadow: none;
             cursor: not-allowed;
+            transform: none;
         }
 
         .btn-outline {
-            background: none;
-            border-color: var(--border-color);
+            background: #FFFFFF;
             color: var(--text-secondary);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--border-hover);
-            color: var(--text-primary);
-        }
-
-        .btn-accent {
-            background: none;
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .btn-accent:hover {
-            background: var(--accent-glow);
-        }
-
-        /* ── Code Display (read only) ── */
-        .code-block {
-            background: #0D0E15;
+            box-shadow: var(--clay-shadow-btn-light);
             border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: 1.25rem;
-            overflow-x: auto;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: #E2E8F0;
         }
 
-        /* Animations */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-outline:hover:not(:disabled) {
+            transform: translateY(-1px);
+            color: var(--text-main);
+            border-color: var(--text-muted);
         }
 
-        /* ── Dynamic Tab Panes ── */
-        .tab-pane {
-            display: none;
+        .btn-outline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .tab-pane.active {
-            display: block;
-        }
-
-        /* ── Sandbox Panel ── */
+        /* ── Sandbox Layout ── */
         .sandbox-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1.5rem;
             height: 100%;
+            width: 100%;
+            max-width: 1100px;
         }
 
         @media (max-width: 900px) {
             .sandbox-layout {
                 grid-template-columns: 1fr;
             }
+            .academy-layout {
+                flex-direction: column !important;
+            }
+            #active-slide-card, #academy-editor-pane {
+                max-width: 100% !important;
+            }
+        }
+
+        .tab-pane {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tab-pane.active {
+            display: flex;
         }
     </style>
 </head>
@@ -664,53 +693,91 @@
 
     <header>
         <a href="#" class="logo-group">
-            <!-- Custom Vector "Cx" Logo drawn exactly from user image -->
-            <svg class="logo-svg" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Circular C -->
-                <path d="M 68 28 A 38 38 0 1 0 68 72" stroke="currentColor" stroke-width="12" stroke-linecap="round" />
-                <!-- Intersection X -->
-                <path d="M 72 38 L 90 56 M 90 38 L 72 56" stroke="currentColor" stroke-width="12" stroke-linecap="round" />
-            </svg>
-            <span class="logo-title">CONNEX Developer Academy</span>
+            <img src="./logo.png" alt="CONNEX Logo" class="logo-img" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';">
+            <span class="logo-title">CONNEX Academy</span>
         </a>
         <nav class="nav-tabs">
-            <button class="tab-trigger active" onclick="setTab('academy')">Academy Course</button>
-            <button class="tab-trigger" onclick="setTab('sandbox')">Code Lab Sandbox</button>
+            <button class="tab-trigger active" onclick="setTab('academy')">Academy</button>
+            <button class="tab-trigger" onclick="setTab('sandbox')">Sandbox</button>
         </nav>
         <div class="progress-stats">
+            <div class="sqlite-badge" id="db-badge">
+                <div class="sqlite-status-dot"></div>
+                <span id="db-status-text">SQLite DB</span>
+            </div>
             <div class="xp-count" id="xp-display">0 XP</div>
         </div>
     </header>
 
     <div class="workspace">
-        <!-- ── SIDEBAR ROADMAP ── -->
         <aside class="sidebar">
-            <div class="sidebar-title">Study Roadmap</div>
-            <div id="roadmap-nodes-box" style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <!-- Dynamically loaded roadmap nodes -->
+            <div class="sidebar-title">Syllabus</div>
+            <div id="roadmap-nodes-box" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                <!-- Syllabus chapters loaded dynamically -->
             </div>
         </aside>
 
-        <!-- ── MAIN CONTENT WORKSPACE ── -->
-        <main style="overflow-y: auto; background-color: var(--bg-primary); width: 100%;">
+        <main style="overflow-y: auto; background-color: var(--bg-body); width: 100%;">
             
-            <!-- ACADEMY TAB PANE -->
+            <!-- ACADEMY PANEL -->
             <div id="academy-pane" class="tab-pane active">
-                <div class="content-pane" id="slide-content-pane">
-                    <!-- Dynamic Slide content gets loaded here -->
+                <div class="content-pane">
+                    <div class="academy-layout">
+                        <!-- Left card: Text contents / Quiz checks -->
+                        <div class="slide-card" id="active-slide-card" style="flex: 1; max-width: 580px;">
+                            <div class="chapter-header">
+                                <span class="chapter-title-text" id="slide-subtitle">Chapter 1</span>
+                                <span class="slide-progress" id="slide-progress-text">Slide 1 of 4</span>
+                            </div>
+                            
+                            <div class="slide-body" id="slide-body-content">
+                                <!-- HTML content loaded dynamically -->
+                            </div>
+
+                            <div class="quiz-box" id="slide-quiz-box" style="display: none;">
+                                <!-- Quiz choices loaded dynamically -->
+                            </div>
+                            
+                            <div class="btn-group">
+                                <button class="btn btn-outline" id="slide-prev-btn" onclick="prevSlide()">Previous</button>
+                                <button class="btn btn-primary" id="slide-next-btn" onclick="nextSlide()">Continue</button>
+                            </div>
+                        </div>
+
+                        <!-- Right card: Shared exercise editor (visible on coding slides only) -->
+                        <div class="editor-pane" id="academy-editor-pane" style="display: none; flex: 1; max-width: 500px;">
+                            <div class="editor-container">
+                                <div class="editor-header">
+                                    <div class="editor-title">main.go</div>
+                                    <button class="btn btn-outline" style="padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 6px;" onclick="resetExerciseCode()">Reset</button>
+                                </div>
+                                <div class="editor-body">
+                                    <div class="line-numbers" id="exercise-line-numbers">1<br>2<br>3<br>4</div>
+                                    <textarea class="editor-textarea" id="exercise-textarea" spellcheck="false" oninput="updateLineNumbers('exercise-textarea', 'exercise-line-numbers')"></textarea>
+                                </div>
+                                <div class="editor-footer">
+                                    <span style="font-size: 0.7rem; color: var(--text-muted);">Compiles locally</span>
+                                    <button class="btn btn-primary" onclick="runExerciseCode()" style="padding: 0.35rem 0.85rem; border-radius: 6px;">Run Test</button>
+                                </div>
+                            </div>
+                            <div class="console-output" id="exercise-console" style="height: 100px; overflow-y: auto;">
+                                <div class="console-line">Ready to test...</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- SANDBOX TAB PANE -->
-            <div id="sandbox-pane" class="tab-pane" style="padding: 2.5rem; height: 100%;">
+            <!-- SANDBOX PANEL -->
+            <div id="sandbox-pane" class="tab-pane" style="padding: 1.5rem; justify-content: center; align-items: flex-start;">
                 <div class="sandbox-layout">
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        <h2 class="chapter-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Interactive Go Lab Sandbox</h2>
-                        <p style="font-size: 0.9rem; margin-bottom: 1rem;">Write, edit, and test custom Go syntax patterns directly in this sandbox interface. Use the dropdown to load lesson templates and verify outputs.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <h2 class="node-title" style="font-size: 1rem; color: var(--text-main);">Practice Coding Sandbox</h2>
+                        <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">Write custom Go code segments. Select from presets list below:</p>
                         
-                        <div style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
-                            <label style="font-size: 0.85rem; color: var(--text-secondary);">Load Template:</label>
-                            <select id="sandbox-template-select" onchange="loadSandboxTemplate()" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); outline: none;">
+                        <div style="display: flex; gap: 0.5rem; align-items: center; font-size: 0.75rem; margin-bottom: 0.25rem;">
+                            <label style="color: var(--text-secondary); font-weight: 600;">Preset:</label>
+                            <select id="sandbox-template-select" onchange="loadSandboxTemplate()" style="background: #FFFFFF; border: 1px solid var(--border-color); padding: 0.25rem 0.5rem; border-radius: 8px; outline: none; font-size: 0.75rem; font-family: var(--font-sans); cursor: pointer; box-shadow: var(--clay-shadow-btn-light);">
                                 <option value="hello">Hello World (Chapter 1)</option>
                                 <option value="pointer">Pointers (Chapter 2)</option>
                                 <option value="struct">Struct JSON Tags (Chapter 3)</option>
@@ -721,25 +788,23 @@
 
                         <div class="editor-container">
                             <div class="editor-header">
-                                <div class="editor-title">main.go</div>
-                                <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="resetSandboxCode()">Reset</button>
+                                <div class="editor-title">sandbox.go</div>
+                                <button class="btn btn-outline" style="padding: 0.2rem 0.6rem; font-size: 0.7rem; border-radius: 6px;" onclick="resetSandboxCode()">Reset</button>
                             </div>
-                            <div class="editor-body">
-                                <div class="line-numbers" id="sandbox-line-numbers">
-                                    1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12
-                                </div>
+                            <div class="editor-body" style="height: 250px;">
+                                <div class="line-numbers" id="sandbox-line-numbers">1<br>2<br>3<br>4</div>
                                 <textarea class="editor-textarea" id="sandbox-textarea" spellcheck="false" oninput="updateLineNumbers('sandbox-textarea', 'sandbox-line-numbers')"></textarea>
                             </div>
                             <div class="editor-footer">
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Interactive compiler simulator</div>
-                                <button class="btn btn-primary" onclick="runSandboxCode()">Run Program</button>
+                                <span style="font-size: 0.7rem; color: var(--text-muted);">Compiles locally</span>
+                                <button class="btn btn-primary" onclick="runSandboxCode()" style="padding: 0.35rem 1rem; border-radius: 6px;">Run Code</button>
                             </div>
                         </div>
                     </div>
 
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        <h3 class="chapter-title" style="font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-top: 1rem;">Execution Console Log</h3>
-                        <div class="pipeline-logs" id="sandbox-console-box" style="background: #050608; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; height: 350px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; height: 100%;">
+                        <h3 class="node-title" style="font-size: 0.85rem; padding-bottom: 0.25rem; margin-top: 0.5rem;">Console Output</h3>
+                        <div class="console-output" id="sandbox-console-box" style="height: calc(100% - 35px); min-height: 250px; background: #0F172A;">
                             <div class="console-line">Ready to execute code...</div>
                         </div>
                     </div>
@@ -749,495 +814,465 @@
         </main>
     </div>
 
-    <!-- Web Audio API Synth Engine for gamified chimes -->
+    <!-- WebAssembly SQLite client persistence logic -->
     <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playFeedbackSound(success) {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            const now = audioCtx.currentTime;
-            
-            if (success) {
-                // Correct chime: ascending, clean sine wave
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, now); // D5
-                osc.frequency.setValueAtTime(880.00, now + 0.08); // A5
-                gainNode.gain.setValueAtTime(0.08, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.35);
+        let db = null;
+
+        // Initialize SQLite WASM
+        if (typeof initSqlJs !== 'undefined') {
+            initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.6.2/${file}` })
+                .then(SQL => {
+                    const savedBase64 = localStorage.getItem('connex_sqlite_bin');
+                    if (savedBase64) {
+                        try {
+                            const binaryString = atob(savedBase64);
+                            const binaryArray = new Uint8Array(binaryString.length);
+                            for (let i = 0; i < binaryString.length; i++) {
+                                binaryArray[i] = binaryString.charCodeAt(i);
+                            }
+                            db = new SQL.Database(binaryArray);
+                        } catch (e) {
+                            console.error("Recreating damaged SQLite file:", e);
+                            db = new SQL.Database();
+                        }
+                    } else {
+                        db = new SQL.Database();
+                    }
+
+                    // Set minimal configurations to keep the DB size extremely low
+                    db.run(`
+                        PRAGMA page_size = 512;
+                        PRAGMA auto_vacuum = FULL;
+                        PRAGMA journal_mode = OFF;
+                        PRAGMA temp_store = MEMORY;
+                    `);
+
+                    db.run(`
+                        CREATE TABLE IF NOT EXISTS progress (
+                            id INTEGER PRIMARY KEY,
+                            xp INTEGER,
+                            chapter_id INTEGER,
+                            completed_chapters TEXT
+                        );
+                    `);
+
+                    const res = db.exec("SELECT COUNT(*) FROM progress");
+                    if (res[0].values[0][0] === 0) {
+                        db.run("INSERT INTO progress (id, xp, chapter_id, completed_chapters) VALUES (1, 0, 1, '{}')");
+                    }
+                    db.run("VACUUM;");
+
+                    updateDatabaseBadge(true);
+                    loadProgressFromDB();
+                })
+                .catch(err => {
+                    console.warn("SQL.js WASM blocked. Falling back to local storage.", err);
+                    updateDatabaseBadge(false);
+                    loadProgressFromDB();
+                });
+        } else {
+            setTimeout(() => {
+                updateDatabaseBadge(false);
+                loadProgressFromDB();
+            }, 100);
+        }
+
+        function updateDatabaseBadge(isActive) {
+            const badge = document.getElementById('db-badge');
+            const text = document.getElementById('db-status-text');
+            if (isActive) {
+                badge.classList.add('active');
+                text.innerText = "SQLite DB";
             } else {
-                // Error buzz: low square/saw wave sliding down
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(140, now);
-                osc.frequency.linearRampToValueAtTime(90, now + 0.2);
-                gainNode.gain.setValueAtTime(0.1, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-                osc.start(now);
-                osc.stop(now + 0.22);
+                badge.classList.remove('active');
+                text.innerText = "Web Storage";
+            }
+        }
+
+        function saveProgressToDB(xp, chapterId, completedMap) {
+            if (db) {
+                db.run(`
+                    UPDATE progress 
+                    SET xp = ?, chapter_id = ?, completed_chapters = ? 
+                    WHERE id = 1`, 
+                    [xp, chapterId, JSON.stringify(completedMap)]
+                );
+                
+                db.run("VACUUM;"); // Ensure DB is defragmented and shrunk to minimum
+                
+                const binaryArray = db.export();
+                let binaryString = "";
+                for (let i = 0; i < binaryArray.length; i++) {
+                    binaryString += String.fromCharCode(binaryArray[i]);
+                }
+                const base64String = btoa(binaryString);
+                localStorage.setItem('connex_sqlite_bin', base64String);
+            } else {
+                localStorage.setItem('connex_xp_fallback', xp);
+                localStorage.setItem('connex_chapter_fallback', chapterId);
+                localStorage.setItem('connex_completed_fallback', JSON.stringify(completedMap));
+            }
+        }
+
+        function loadProgressFromDB() {
+            if (db) {
+                try {
+                    const res = db.exec("SELECT xp, chapter_id, completed_chapters FROM progress WHERE id = 1");
+                    if (res.length > 0 && res[0].values.length > 0) {
+                        userXP = res[0].values[0][0];
+                        activeChapterId = res[0].values[0][1];
+                        completedNodes = JSON.parse(res[0].values[0][2]);
+                    }
+                } catch (e) {
+                    console.error("Error reading progress, using fallback:", e);
+                }
+            } else {
+                userXP = parseInt(localStorage.getItem('connex_xp_fallback') || '0');
+                activeChapterId = parseInt(localStorage.getItem('connex_chapter_fallback') || '1');
+                completedNodes = JSON.parse(localStorage.getItem('connex_completed_fallback') || '{"1":false,"2":false,"3":false,"4":false,"5":false,"6":false,"7":false,"8":false}');
+            }
+            
+            updateXPDisplay();
+            loadRoadmapNodes();
+            loadActiveSlide();
+        }
+
+        // Web Audio Synthesized Chime/Buzz Feedback Sound Effects
+        function playFeedbackSound(isSuccess) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                if (isSuccess) {
+                    // Success chord/chime: Ascending C5 -> G5
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+                    
+                    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+                    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.35);
+                } else {
+                    // Fail: Low detuned buzz
+                    osc.type = 'sawtooth';
+                    gain.gain.setValueAtTime(0, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.25);
+                    
+                    osc.frequency.setValueAtTime(140, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.2);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                }
+            } catch (e) {
+                console.warn("Web Audio Context blocked:", e);
             }
         }
     </script>
 
-    <!-- Comprehensive Course Curriculum Data (embedded from GO_COURSE.md) -->
+    <!-- Bite-sized Course Data & Navigation logic -->
     <script>
         const courseData = {
             1: {
-                title: "Packages & Imports",
+                title: "Chapter 1: Packages & Imports",
                 subtitle: "Chapter 1",
-                description: "Understand the structure of Go source files and libraries.",
                 slides: [
                     {
                         type: "content",
-                        title: "The Kitchen Analogy",
+                        title: "Declaring the Package",
                         html: `
-                            <p>Imagine you are a head chef setting up a new restaurant kitchen:</p>
-                            <div class="analogy-card">
-                                <div class="analogy-title">The Analogy</div>
-                                <p><strong>1. Declaring the kitchen:</strong> "This is the MAIN kitchen, which produces the actual meals, not a prep room that just chops onions."</p>
-                                <p><strong>2. Gathering your tools:</strong> You need a knife, a pot, a timer, and a scale from the storage closet.</p>
+                            <p>Every Go source file starts with a package declaration at the very top line.</p>
+                            <pre class="code-block"><code>package main</code></pre>
+                            <div class="analogy-box">
+                                <div class="analogy-label">Analogy</div>
+                                <p>This acts like declaring the main kitchen inside a restaurant where the actual preparation begins.</p>
                             </div>
-                            <p>In Go, every program does the exact same thing:</p>
-                            <p><strong>package main</strong> = "This is the main kitchen." It tells the compiler: "This code is a runnable program. This is where the application starts."</p>
-                            <p><strong>import (...)</strong> = "Gathering our tools." It tells the compiler: "We need tools from the standard library storage closet."</p>
                         `
                     },
                     {
                         type: "content",
-                        title: "The Go Standard Library",
+                        title: "Importing Tools",
                         html: `
-                            <p>Go comes with a built-in pantry of pre-made toolboxes called the <strong>Standard Library</strong>. You do not need to write utility tools from scratch; you just import them:</p>
-                            <pre class="code-block"><code>// cmd/witness/main.go
-package main
-
-import (
-    "crypto/ed25519"   // Cryptographic signatures (verifying bank identity)
-    "crypto/rand"      // Cryptographic random generator (for generating keys)
-    "crypto/sha256"    // SHA-256 hashing (creating secure fingerprints of data)
-    "encoding/base64"  // Converts binary bytes into readable text like "SGVsbG8="
-    "fmt"              // Prints text to the screen (formatted print)
-    "time"             // Calculates dates, times, and timeouts
-)</code></pre>
-                            <div class="ask-why">
-                                <div class="ask-why-title">Ask Why?</div>
-                                <div class="ask-why-q">Why does Go refuse to compile if you import a package and never use it?</div>
-                                <div class="ask-why-a">Unused imports slow down compile times and bloat the final binary file. More importantly, in bank security, every unused line of code represents a potential surface area for bugs or security leaks. Go prevents this at the compiler stage!</div>
-                            </div>
+                            <p>To use built-in functions (like formatted printing), we borrow them from the Go Standard Library using imports.</p>
+                            <pre class="code-block"><code>import "fmt"</code></pre>
+                            <p>Go will fail to compile if you import a package but never use it, avoiding bloated binaries.</p>
                         `
                     },
                     {
+                        type: "quiz",
+                        title: "Chapter 1 Checkpoint",
+                        question: "Which keyword imports standard library packages into a Go file?",
+                        choices: ["package", "import", "require", "include"],
+                        correctIndex: 1
+                    },
+                    {
                         type: "coding",
-                        title: "Write Your First Go Program",
-                        task: "Complete this basic Go program to print a status check to the console. Declares 'main' package, import 'fmt' and 'time', and complete the main function.",
-                        template: `package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func main() {
-    // 1. Print "CONNEX Witness — Online"
-    fmt.Println("CONNEX Witness — Online")
-    
-    // 2. Print "Current time:" followed by time.Now()
-    fmt.Println("Current time:", time.Now())
-}`,
+                        title: "Chapter 1 Exercise",
+                        task: "Complete the code to print the text 'Online' using the standard 'fmt.Println' function.",
+                        template: `package main\n\nimport "fmt"\n\nfunc main() {\n    // Print "Online"\n    \n}`,
                         validate: function(code) {
-                            if (!code.includes("package main")) return { ok: false, msg: "Missing 'package main'" };
-                            if (!code.includes('"fmt"')) return { ok: false, msg: "Missing 'fmt' import" };
-                            if (!code.includes('"time"')) return { ok: false, msg: "Missing 'time' import" };
-                            if (!code.includes("func main()")) return { ok: false, msg: "Missing main function declaration" };
-                            if (!code.includes("CONNEX Witness — Online")) return { ok: false, msg: "Missing print string 'CONNEX Witness — Online'" };
-                            if (!code.includes("time.Now()")) return { ok: false, msg: "Missing clock call 'time.Now()'" };
-                            return { ok: true, msg: "CONNEX Witness — Online\nCurrent time: 2026-06-02 00:15:30.12456 UTC\n\n=== Build Successful ===" };
+                            if (!code.includes("package main")) return { ok: false, msg: "Missing 'package main' declaration." };
+                            if (!code.includes("fmt.Println")) return { ok: false, msg: "Make sure to print using 'fmt.Println'." };
+                            if (!code.includes("Online")) return { ok: false, msg: "Your print statement must contain the string 'Online'." };
+                            return { ok: true, msg: "Online\n\n=== Build Successful ===" };
                         }
                     }
                 ]
             },
             2: {
-                title: "Variables, Memory & Encoding",
+                title: "Chapter 2: Variables & Types",
                 subtitle: "Chapter 2",
-                description: "Memory drawers, data types, slices, and binary BCD formats.",
                 slides: [
                     {
                         type: "content",
-                        title: "Memory Drawers (Variables)",
+                        title: "Declaring Variables",
                         html: `
-                            <p>Inside your computer is <strong>RAM</strong> (Random Access Memory), which acts as the computer's short-term memory.</p>
-                            <p>Imagine RAM as a massive warehouse filled with numbered storage drawers. Each drawer has a unique number stamped on it (its <strong>Memory Address</strong>).</p>
-                            <p>Writing code would be extremely tedious if we had to reference drawers by numbers (like "put 100 in box #1024"). Instead, we use <strong>Variables</strong>—human-friendly labels taped onto the drawers.</p>
-                            <pre class="code-block"><code>bankName := "Equity"  // Tells Go to find a drawer, tape "bankName" on it, and insert the text value.</code></pre>
-                            <p>Go supports two key operators:
-                            <br>• <strong>:=</strong> (Create & Assign): Creates a new variable drawer.
-                            <br>• <strong>=</strong> (Reassign): Replaces the value in an existing drawer.</p>
+                            <p>A variable is a labeled container in memory. Go uses <code>:=</code> to declare and initialize variables in one line.</p>
+                            <pre class="code-block"><code>balance := 500.00 // Declares float64</code></pre>
+                            <p>Once created, use a standard equals sign (<code>=</code>) to modify the value of a variable.</p>
                         `
                     },
                     {
                         type: "content",
                         title: "Pointers & Addresses",
                         html: `
-                            <p>A <strong>Pointer</strong> is a variable that does not store actual data. Instead, it stores the <strong>Memory Address</strong> (the drawer number) of another variable.</p>
-                            <p>Think of it as a paper card with a drawer number written on it:</p>
-                            <p>• <strong>&</strong> (Address-of): Returns the drawer number where a variable is stored.</p>
-                            <p>• <strong>*</strong> (Dereference): Follows the address on the card, opens that drawer, and lets you read or overwrite the value inside.</p>
-                            <div class="analogy-card">
-                                <div class="analogy-title">Why Use Pointers?</div>
-                                <p>By default, Go copies all variables when passing them to functions. For large structures, copying consumes memory and CPU. Passing an 8-byte pointer card is virtually instantaneous.</p>
-                            </div>
+                            <p>A pointer stores the memory address of another variable. We obtain an address using the <code>&</code> operator.</p>
+                            <pre class="code-block"><code>ptr := &balance // ptr holds memory address</code></pre>
+                            <p>We read or modify the target variable directly by using the dereference operator <code>*</code>.</p>
                         `
                     },
                     {
                         type: "content",
-                        title: "Packed BCD vs ASCII",
+                        title: "Slices, Maps & Encoding",
                         html: `
-                            <p>Legacy systems transmit numbers over credit networks using <strong>BCD (Binary Coded Decimal)</strong> to minimize network bandwidth.</p>
-                            <p>• <strong>ASCII:</strong> Each digit takes 1 byte (8 bits). The number 12 takes 2 bytes.</p>
-                            <p>• <strong>BCD:</strong> Since digits 0-9 only need 4 bits of space, we can pack 2 digits into a single byte by splitting it into two 4-bit halves (nibbles).</p>
-                            <p>We use bit shifting in Go to decode high and low nibbles:</p>
-                            <pre class="code-block"><code>digit1 := b >> 4     // Shift bits right by 4 to get high nibble
-digit2 := b & 0x0F   // Mask with 00001111 to get low nibble</code></pre>
+                            <p>Slices (<code>[]type</code>) are dynamic arrays. Maps (<code>map[K]V</code>) store key-value associations.</p>
+                            <p>Legacy banks use **BCD** (Binary Coded Decimal) to pack two numeric digits into a single byte using bit shifting, saving 50% storage over ASCII text.</p>
                         `
                     },
                     {
+                        type: "quiz",
+                        title: "Chapter 2 Checkpoint",
+                        question: "Which symbol gets the memory address pointer of a variable?",
+                        choices: ["*", "&", "#", "@"],
+                        correctIndex: 1
+                    },
+                    {
                         type: "coding",
-                        title: "Pointer Interaction Session",
-                        task: "Complete the Go code to change the value of 'balance' to 65000.20 using the pointer 'p'. Then print the updated value.",
-                        template: `package main
-
-import "fmt"
-
-func main() {
-    balance := 50000.75
-    
-    // 1. Declare p as a pointer to balance
-    var p *float64 = &balance
-    
-    // 2. Dereference p to change balance value to 65000.20
-    *p = 65000.20
-    
-    fmt.Printf("Updated balance: %.2f\\n", balance)
-}`,
+                        title: "Chapter 2 Exercise",
+                        task: "Set the value of count to 20 by modifying the pointer variable 'ptr' using dereferencing.",
+                        template: `package main\n\nimport "fmt"\n\nfunc main() {\n    count := 10\n    ptr := &count\n    \n    // Overwrite the pointer value to 20 below\n    \n    \n    fmt.Println(count)\n}`,
                         validate: function(code) {
-                            if (!code.includes("p = &balance") && !code.includes("p := &balance")) return { ok: false, msg: "Did you declare p pointing to balance?" };
-                            if (!code.includes("*p = 65000.20") && !code.includes("*p=65000.20")) return { ok: false, msg: "Did you modify balance using the dereference operator (*p)?" };
-                            return { ok: true, msg: "Updated balance: 65000.20\n\n=== Build Successful ===" };
+                            if (!code.includes("*ptr = 20") && !code.includes("*ptr=20")) return { ok: false, msg: "Did you open the container using '*ptr = 20'?" };
+                            return { ok: true, msg: "20\n\n=== Build Successful ===" };
                         }
                     }
                 ]
             },
             3: {
-                title: "Structs & JSON Tags",
+                title: "Chapter 3: Structs & JSON",
                 subtitle: "Chapter 3",
-                description: "Defining record layouts, public/private fields, and JSON tags.",
                 slides: [
                     {
                         type: "content",
-                        title: "Defining Structures (Forms)",
+                        title: "Defining Structs",
                         html: `
-                            <p>A single banking transaction contains multiple related pieces of data (Amount, Currency, Timestamp). Keeping these in separate variables is dangerous.</p>
-                            <p>A <strong>Struct</strong> is a custom compound data type that acts like a blank paper form. We layout the fields once, and fill out instances of it.</p>
-                            <pre class="code-block"><code>type SignatureEntry struct {
-    Witness     string ` + "`json:\"witness\"`" + `
-    Fingerprint string ` + "`json:\"fingerprint\"`" + `
-    Signature   string ` + "`json:\"signature\"`" + `
-}</code></pre>
-                            <p><strong>Visibility Rule:</strong> Struct fields starting with a capital letter are <strong>Public</strong> (accessible externally). Fields starting with a lowercase letter are <strong>Private</strong> (locked inside their package).</p>
+                            <p>A Struct is a custom type that groups multiple fields of different data types under one name.</p>
+                            <pre class="code-block"><code>type Server struct {\n    Port int\n    Host string\n}</code></pre>
                         `
                     },
                     {
                         type: "content",
-                        title: "Memory: Stack vs Heap",
+                        title: "JSON tags & Heap",
                         html: `
-                            <p>When you allocate structs, Go decides where to place them in memory:</p>
-                            <p>• <strong>The Stack:</strong> Extremely fast access. Local to the function execution. Erased as soon as the function returns.</p>
-                            <p>• <strong>The Heap:</strong> Spacious storage pantry. Variables survive function termination. Accessed using pointers. Slower to clean up (requires Go's Garbage Collector).</p>
+                            <p>We add struct tags in backticks to instruct the parser how fields map during JSON encoding.</p>
+                            <pre class="code-block"><code>Port int \`json:"port"\`</code></pre>
+                            <p>Capitalized fields are **public** (exported). Lowercase fields are private. Struct pointers escape to the **Heap** for persistent storage.</p>
                         `
                     },
                     {
+                        type: "quiz",
+                        title: "Chapter 3 Checkpoint",
+                        question: "Why must struct fields start with a capital letter to be serialized into JSON?",
+                        choices: [
+                            "Lowercase fields are reserved for numbers.",
+                            "Go requires all variable names to be capitalized.",
+                            "Only capitalized fields are public and visible to external JSON libraries.",
+                            "It makes JSON encoding execute faster."
+                        ],
+                        correctIndex: 2
+                    },
+                    {
                         type: "coding",
-                        title: "JSON Marshalling Lab",
-                        task: "Complete the SystemConfig struct. Bind the public fields Port (int) and DBPath (string) to the JSON tags 'port' and 'db_path'. Keep secretToken (string) private.",
-                        template: `package main
-
-import (
-    "encoding/json"
-    "fmt"
-)
-
-type SystemConfig struct {
-    // Write your fields here
-    Port        int    \`json:"port"\`
-    DBPath      string \`json:"db_path"\`
-    secretToken string
-}
-
-func main() {
-    config := SystemConfig{Port: 8080, DBPath: "data/connex.db", secretToken: "TOKEN"}
-    b, _ := json.Marshal(config)
-    fmt.Println(string(b))
-}`,
+                        title: "Chapter 3 Exercise",
+                        task: "Add the JSON tag 'port' to the Port field inside the Server struct.",
+                        template: `package main\n\ntype Server struct {\n    // Add 'port' JSON tag to this field\n    Port int\n}`,
                         validate: function(code) {
-                            if (!code.includes("Port") || !code.includes("`json:\"port\"`")) return { ok: false, msg: "Did you declare public field Port with correct JSON tag?" };
-                            if (!code.includes("DBPath") || !code.includes("`json:\"db_path\"`")) return { ok: false, msg: "Did you declare public field DBPath with correct JSON tag?" };
-                            if (code.includes("SecretToken") || code.includes("secretToken string `")) return { ok: false, msg: "secretToken must remain private (lowercase) and have no struct tag!" };
-                            return { ok: true, msg: `{"port":8080,"db_path":"data/connex.db"}\n\n=== Build Successful ===` };
+                            if (!code.includes("Port") || !code.includes("`json:\"port\"`")) return { ok: false, msg: "Use struct tag `json:\"port\"` behind the Port field." };
+                            return { ok: true, msg: "=== Build Successful ===" };
                         }
                     }
                 ]
             },
             4: {
-                title: "Functions & Scope",
+                title: "Chapter 4: Functions & Scope",
                 subtitle: "Chapter 4",
-                description: "Input parameters, multiple returns, blank identifier, and scope.",
                 slides: [
                     {
                         type: "content",
-                        title: "Functional Recipes",
+                        title: "Inputs & Multi-Returns",
                         html: `
-                            <p>A <strong>Function</strong> is a reusable recipe that takes inputs (parameters), executes code inside its body, and returns outputs (return values).</p>
-                            <pre class="code-block"><code>func sha256Hex(data []byte) string {
-    h := sha256.Sum256(data)
-    return hex.EncodeToString(h[:])
-}</code></pre>
-                            <p><strong>Pass-by-Value Invariant:</strong> Go always passes values by copying them. If you hand a large struct to a function, Go copies the whole struct. To prevent copying overhead, pass a pointer instead.</p>
+                            <p>Functions process inputs and return outputs. Go supports returning multiple variables at once.</p>
+                            <pre class="code-block"><code>func calc(a, b int) (int, error)</code></pre>
+                            <p>Use the blank identifier <code>_</code> (underscore) to discard any unwanted return values.</p>
                         `
                     },
                     {
-                        type: "content",
-                        title: "Multiple Returns & The Underscore",
-                        html: `
-                            <p>Go functions can return multiple values. This is commonly used in Go to return data along with error status flags.</p>
-                            <pre class="code-block"><code>pub, priv, err := generateKeys()</code></pre>
-                            <p>If you don't need one of the values, you must discard it using the **Blank Identifier** (<code>_</code>) to avoid compiler errors for unused variables:</p>
-                            <pre class="code-block"><code>pub, _, err := generateKeys() // Discards private key</code></pre>
-                        `
+                        type: "quiz",
+                        title: "Chapter 4 Checkpoint",
+                        question: "What symbol do we use to discard an unused return variable in Go?",
+                        choices: ["-", "_", "*", "?"],
+                        correctIndex: 1
                     },
                     {
                         type: "coding",
-                        title: "Create a Net Calculator",
-                        task: "Write the calculateFee function to calculate a 2% commission fee. The function must accept a float64 amount, and return two float64 values: the fee, and the remaining net amount.",
-                        template: `package main
-
-import "fmt"
-
-const CommissionRate = 0.02
-
-// Write calculateFee function here
-func calculateFee(amount float64) (float64, float64) {
-    fee := amount * CommissionRate
-    return fee, amount - fee
-}
-
-func main() {
-    fee, net := calculateFee(50000.00)
-    fmt.Printf("Fee: %.2f, Net: %.2f\\n", fee, net)
-}`,
+                        title: "Chapter 4 Exercise",
+                        task: "Write a function 'sum(a int, b int) int' that adds two inputs and returns the result.",
+                        template: `package main\n\nimport "fmt"\n\n// Write the sum function below\n\n\nfunc main() {\n    fmt.Println(sum(5, 5))\n}`,
                         validate: function(code) {
-                            if (!code.includes("calculateFee(amount float64) (float64, float64)") && !code.includes("calculateFee(amount float64)(float64,float64)")) {
-                                return { ok: false, msg: "Ensure the function signature accepts float64 and returns (float64, float64)." };
-                            }
-                            return { ok: true, msg: "Fee: 1000.00, Net: 49000.00\n\n=== Build Successful ===" };
+                            if (!code.match(/func\s+sum\s*\(/)) return { ok: false, msg: "Write the sum function signature correctly." };
+                            if (!code.includes("+")) return { ok: false, msg: "Did you add the values together?" };
+                            return { ok: true, msg: "10\n\n=== Build Successful ===" };
                         }
                     }
                 ]
             },
             5: {
-                title: "Methods & Receivers",
+                title: "Chapter 5: Struct Methods",
                 subtitle: "Chapter 5",
-                description: "Binding functions to structs, value receivers, and mutating state.",
                 slides: [
                     {
                         type: "content",
-                        title: "Attaching Actions to Structs",
+                        title: "Attaching Methods",
                         html: `
-                            <p>A **Method** is simply a function that belongs to a specific struct form. It has access to the fields of that struct using a prefix argument called the <strong>Receiver</strong>.</p>
-                            <pre class="code-block"><code>// The receiver (m *Message) binds the method to the Message struct
-func (m *Message) AmountKES() float64 {
-    s := m.Fields[4]
-    n, _ := strconv.ParseInt(s, 10, 64)
-    return float64(n) / 100.0
-}</code></pre>
-                            <p>• <strong>Value Receiver:</strong> The method gets a copy of the struct. It cannot modify the original fields (Read-Only).</p>
-                            <p>• <strong>Pointer Receiver:</strong> The method gets the memory address of the struct. It can edit the original fields directly (Read-Write).</p>
+                            <p>A method is a function attached directly to a struct using a **Receiver** argument.</p>
+                            <pre class="code-block"><code>func (a *Account) Deposit(val float64)</code></pre>
+                            <p>Using a pointer receiver <code>*</code> allows the method to modify the original struct's fields directly in memory.</p>
                         `
                     },
                     {
+                        type: "quiz",
+                        title: "Chapter 5 Checkpoint",
+                        question: "What is the primary benefit of using a pointer receiver (*) in a struct method?",
+                        choices: [
+                            "It makes the method execute 10x faster.",
+                            "It enables the method to mutate/edit fields on the original struct.",
+                            "It restricts access from outside packages.",
+                            "It automatically prints errors to the console."
+                        ],
+                        correctIndex: 1
+                    },
+                    {
                         type: "coding",
-                        title: "Account Mutation Method",
-                        task: "Add a Withdraw method to the BankAccount struct using a pointer receiver. It must deduct the amount from Balance if funds are sufficient and return true. If insufficient, do not alter Balance and return false.",
-                        template: `package main
-
-import "fmt"
-
-type BankAccount struct {
-    AccountHolder string
-    Balance       float64
-}
-
-// Write the Withdraw method here
-func (a *BankAccount) Withdraw(amount float64) bool {
-    if a.Balance < amount {
-        return false
-    }
-    a.Balance -= amount
-    return true
-}
-
-func main() {
-    acc := &BankAccount{AccountHolder: "John Doe", Balance: 500.00}
-    ok := acc.Withdraw(200.00)
-    fmt.Printf("Success: %t, Balance: %.2f\\n", ok, acc.Balance)
-}`,
+                        title: "Chapter 5 Exercise",
+                        task: "Add a pointer receiver '*Account' to the Deposit method signature.",
+                        template: `package main\n\ntype Account struct {\n    Balance float64\n}\n\n// Complete the method receiver definition below\nfunc Deposit(amount float64) {\n    \n}`,
                         validate: function(code) {
-                            if (!code.includes("func (a *BankAccount) Withdraw(amount float64) bool") && !code.includes("func (a *BankAccount)Withdraw(amount float64)bool")) {
-                                return { ok: false, msg: "Ensure you use a pointer receiver (*BankAccount) for the Withdraw method." };
-                            }
-                            return { ok: true, msg: "Success: true, Balance: 300.00\n\n=== Build Successful ===" };
+                            if (!code.includes("(a *Account)") && !code.includes("(*Account)")) return { ok: false, msg: "Use pointer receiver '*Account' for the Deposit method." };
+                            return { ok: true, msg: "=== Build Successful ===" };
                         }
                     }
                 ]
             },
             6: {
-                title: "Error Handling & Wrapping",
+                title: "Chapter 6: Error Handling",
                 subtitle: "Chapter 6",
-                description: "Sentinel errors, error interface, error wrapping (%w), and file permissions.",
                 slides: [
                     {
                         type: "content",
-                        title: "Explicit Failures",
+                        title: "Errors as Values",
                         html: `
-                            <p>Go does not have runtime try/catch exceptions. Errors are handled as ordinary return values. We check them immediately following execution.</p>
-                            <pre class="code-block"><code>file, err := os.Open("config.json")
-if err != nil {
-    return fmt.Errorf("could not load configurations: %w", err)
-}</code></pre>
-                            <p><strong>Error Wrapping (%w):</strong> We wrap low-level errors inside contextual high-level errors to preserve logging trace integrity.
-                            <br>• <code>errors.Is(err, target)</code>: Check if any error in the wrapped chain matches a target.
-                            <br>• <code>errors.As(err, &targetStruct)</code>: Checks for custom error structures and extracts their fields.</p>
+                            <p>Go doesn't have try/catch. Errors are returned as ordinary values. Check them immediately:</p>
+                            <pre class="code-block"><code>if err != nil {\n    return fmt.Errorf("action failed: %w", err)\n}</code></pre>
+                            <p>We use <code>%w</code> to wrap errors, retaining the original failure context for logging audits.</p>
                         `
                     },
                     {
+                        type: "quiz",
+                        title: "Chapter 6 Checkpoint",
+                        question: "Which formatting code is used within fmt.Errorf to wrap an error?",
+                        choices: ["%v", "%s", "%w", "%x"],
+                        correctIndex: 2
+                    },
+                    {
                         type: "coding",
-                        title: "Build Custom Error Validation",
-                        task: "Complete the custom error implementation for FundError. It must implement the error interface by declaring an Error() string method returning 'insufficient funds'.",
-                        template: `package main
-
-import "fmt"
-
-type FundError struct {
-    Required  float64
-    Available float64
-}
-
-// 1. Implement Error() string for *FundError
-func (e *FundError) Error() string {
-    return "insufficient funds"
-}
-
-func main() {
-    var err error = &FundError{Required: 100, Available: 50}
-    fmt.Println(err.Error())
-}`,
+                        title: "Chapter 6 Exercise",
+                        task: "Return an error using 'errors.New' when connection is false.",
+                        template: `package main\n\nimport "errors"\n\nfunc checkConnection(conn bool) error {\n    if !conn {\n        // Return "disconnected" error here\n        \n    }\n    return nil\n}`,
                         validate: function(code) {
-                            if (!code.includes("func (e *FundError) Error() string") && !code.includes("func (e *FundError)Error() string")) {
-                                return { ok: false, msg: "Make sure FundError implements the error contract interface." };
-                            }
-                            return { ok: true, msg: "insufficient funds\n\n=== Build Successful ===" };
+                            if (!code.includes("errors.New(\"disconnected\")")) return { ok: false, msg: "Return the errors.New('disconnected') value." };
+                            return { ok: true, msg: "=== Build Successful ===" };
                         }
                     }
                 ]
             },
             7: {
-                title: "Goroutines & Channels",
+                title: "Chapter 7: Goroutines & Channels",
                 subtitle: "Chapter 7",
-                description: "Lightweight background threads, message tubes, select statements, and timeouts.",
                 slides: [
                     {
                         type: "content",
-                        title: "Background Assistants",
+                        title: "Concurrency Pipes",
                         html: `
-                            <p>We can launch concurrent background threads in Go using the **go** keyword in front of any function execution.</p>
-                            <p>To safely share data between threads without race conditions, Go uses **Channels** (pneumatic message tubes).</p>
-                            <pre class="code-block"><code>ch := make(chan string) // Unbuffered
-ch <- "signed"          // Sends block until a receiver is ready
-msg := <-ch             // Receives block until data is sent</code></pre>
-                            <p><strong>Select statements:</strong> Multi-channel monitors. Combined with <code>time.After</code> to enforce execution timeouts:</p>
-                            <pre class="code-block"><code>select {
-case r := <-ch:
-    // Process response
-case <-time.After(150 * time.Millisecond):
-    // Timeout error fallback
-}</code></pre>
+                            <p>Goroutines run code concurrently in the background using the <code>go</code> keyword.</p>
+                            <p>**Channels** are pipes used to safely send/receive variables between goroutines without data races.</p>
+                            <pre class="code-block"><code>ch := make(chan int)\nch <- 42      // Send\nval := <-ch   // Receive</code></pre>
                         `
                     },
                     {
+                        type: "quiz",
+                        title: "Chapter 7 Checkpoint",
+                        question: "Which channel configuration allows sending data without waiting for an active receiver to block?",
+                        choices: ["Unbuffered channel", "Buffered channel", "Locked channel", "Raw map channel"],
+                        correctIndex: 1
+                    },
+                    {
                         type: "coding",
-                        title: "Channel Timeout Simulator",
-                        task: "Write a select block that receives a string from the 'response' channel, or times out after 100 milliseconds.",
-                        template: `package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func main() {
-    response := make(chan string)
-    
-    go func() {
-        time.Sleep(50 * time.Millisecond)
-        response <- "Approved"
-    }()
-
-    select {
-    case msg := <-response:
-        fmt.Println("Received:", msg)
-    case <-time.After(100 * time.Millisecond):
-        fmt.Println("Timeout!")
-    }
-}`,
+                        title: "Chapter 7 Exercise",
+                        task: "Write a code segment to send the number 42 into the channel named 'ch'.",
+                        template: `package main\n\nfunc main() {\n    ch := make(chan int, 1)\n    // Send 42 into the channel\n    \n}`,
                         validate: function(code) {
-                            if (!code.includes("case msg := <-response:") && !code.includes("case msg:=<-response:")) return { ok: false, msg: "Missing select case for receiving from response channel." };
-                            if (!code.includes("time.After")) return { ok: false, msg: "Missing timeout case using time.After." };
-                            return { ok: true, msg: "Received: Approved\n\n=== Build Successful ===" };
+                            if (!code.includes("ch <- 42")) return { ok: false, msg: "Did you use send operator '<-' to send 42 to ch?" };
+                            return { ok: true, msg: "=== Build Successful ===" };
                         }
                     }
                 ]
             },
             8: {
-                title: "Full Code Walkthrough",
+                title: "Chapter 8: Ledger Integrity",
                 subtitle: "Chapter 8",
-                description: "Analyze the sequence of transaction processing, locks, and WAL databases.",
                 slides: [
                     {
                         type: "content",
-                        title: "The Architecture Sequence",
+                        title: "WAL Ledger & Mutexes",
                         html: `
-                            <p>Let's map out the final transaction coordination cycle across the core system files:</p>
-                            <p><strong>1. Gateway Ingests:</strong> Translates incoming base64 messages in <code>cmd/gateway/main.go</code>.</p>
-                            <p><strong>2. Mutex Sequence:</strong> Acquires <code>g.mu.Lock()</code> to guarantee linear ordering of states without parallel chain branching.</p>
-                            <p><strong>3. Witness Notarizes:</strong> Hits witness nodes in parallel, verifying their Ed25519 signatures inside <code>collectSignatures</code>.</p>
-                            <p><strong>4. SQLite Persistence:</strong> Writes event logs using parameterized SQL variables to block SQL injections. Append-only triggers block modifications at database level.</p>
+                            <p>CONNEX utilizes Mutex locks to protect memory records from parallel updates.</p>
+                            <p>The ledger is saved using SQLite's **WAL** (Write-Ahead Logging) mode, allowing concurrent reads/writes without locks. Database triggers automatically block all updates and deletions, keeping transaction records append-only.</p>
                         `
                     },
                     {
                         type: "quiz",
-                        title: "Final Check: CONNEX Security Invariant",
-                        question: "Why does the Gateway use a sync.Mutex lock before calculating the coordination hash?",
+                        title: "Chapter 8 Checkpoint",
+                        question: "How does the SQLite ledger in CONNEX guarantee that transaction events are append-only?",
                         choices: [
-                            "To encrypt the transaction payload.",
-                            "To prevent multiple transactions from executing in parallel and causing hash chain forks.",
-                            "To shut down witness nodes during database maintenance.",
-                            "To bypass XML schema validation."
+                            "By running on read-only drives.",
+                            "Through database-level triggers that abort UPDATE and DELETE operations.",
+                            "By deleting the database file after every audit.",
+                            "Using Mutex locks inside the database driver."
                         ],
                         correctIndex: 1
                     }
@@ -1245,18 +1280,16 @@ func main() {
             }
         };
 
-        // User persistent progress tracking
-        let userXP = parseInt(localStorage.getItem('connex_xp') || '0');
-        let completedNodes = JSON.parse(localStorage.getItem('connex_completed') || '{"1":false,"2":false,"3":false,"4":false,"5":false,"6":false,"7":false,"8":false}');
+        // User State
+        let userXP = 0;
+        let completedNodes = {
+            1: false, 2: false, 3: false, 4: false,
+            5: false, 6: false, 7: false, 8: false
+        };
 
         let activeChapterId = 1;
         let activeSlideIndex = 0;
         let activeSelectedAnswer = null;
-
-        // Initialize UI on load
-        updateXPDisplay();
-        loadRoadmapNodes();
-        loadActiveSlide();
 
         function setTab(tabName) {
             document.querySelectorAll('.tab-trigger').forEach(trigger => trigger.classList.remove('active'));
@@ -1268,8 +1301,7 @@ func main() {
 
         function updateXPDisplay() {
             document.getElementById('xp-display').innerText = `${userXP} XP`;
-            localStorage.setItem('connex_xp', userXP);
-            localStorage.setItem('connex_completed', JSON.stringify(completedNodes));
+            saveProgressToDB(userXP, activeChapterId, completedNodes);
         }
 
         function loadRoadmapNodes() {
@@ -1291,12 +1323,10 @@ func main() {
                 
                 nodesBox.innerHTML += `
                     <div class="${nodeClass}" ${clickHandler}>
-                        <div class="node-header">
-                            <span class="node-index">Chapter ${i}</span>
-                            <div class="node-status-icon"></div>
-                        </div>
-                        <div class="node-title">${node.title}</div>
-                        <div class="node-desc">${node.description}</div>
+                        <span class="node-title">
+                            <span class="node-index">${i}.</span> ${node.title.replace("Chapter " + i + ": ", "")}
+                        </span>
+                        <div class="node-status-dot"></div>
                     </div>
                 `;
             }
@@ -1312,124 +1342,126 @@ func main() {
         function loadActiveSlide() {
             const chapter = courseData[activeChapterId];
             const slide = chapter.slides[activeSlideIndex];
-            const pane = document.getElementById('slide-content-pane');
+            
+            // Update Headers
+            document.getElementById('slide-subtitle').innerText = chapter.subtitle;
+            document.getElementById('slide-progress-text').innerText = `Slide ${activeSlideIndex + 1} of ${chapter.slides.length}`;
             
             activeSelectedAnswer = null;
             
-            let html = `
-                <div class="slide-container">
-                    <div class="chapter-header">
-                        <span class="chapter-subtitle">${chapter.subtitle} — Slide ${activeSlideIndex + 1} of ${chapter.slides.length}</span>
-                        <h1 class="chapter-title">${slide.title}</h1>
-                    </div>
-            `;
+            const slideBody = document.getElementById('slide-body-content');
+            const quizBox = document.getElementById('slide-quiz-box');
+            const editorPane = document.getElementById('academy-editor-pane');
+            const activeCard = document.getElementById('active-slide-card');
+            
+            // Reset layout styles
+            quizBox.style.display = 'none';
+            editorPane.style.display = 'none';
+            activeCard.style.maxWidth = '580px';
+            
+            const prevBtn = document.getElementById('slide-prev-btn');
+            const nextBtn = document.getElementById('slide-next-btn');
+            
+            prevBtn.disabled = (activeSlideIndex === 0);
+            prevBtn.innerText = "Previous";
+            prevBtn.onclick = prevSlide;
+            
+            nextBtn.disabled = false;
+            nextBtn.innerText = "Continue";
+            nextBtn.onclick = nextSlide;
             
             if (slide.type === "content") {
-                html += `
+                slideBody.innerHTML = `
+                    <h2>${slide.title}</h2>
                     ${slide.html}
-                    <div class="btn-group">
-                        <button class="btn btn-outline" onclick="prevSlide()" ${activeSlideIndex === 0 ? "disabled" : ""}>Previous</button>
-                        <button class="btn btn-primary" onclick="nextSlide()">Continue</button>
-                    </div>
                 `;
-                pane.innerHTML = html;
             } else if (slide.type === "quiz") {
-                html += `
-                    <p style="margin-bottom: 1.5rem;">${slide.question}</p>
-                    <div class="quiz-box">
+                slideBody.innerHTML = `
+                    <h2>${slide.title}</h2>
+                    <p style="margin-bottom: 1rem; font-weight: 500; font-size: 0.9rem;">${slide.question}</p>
                 `;
+                
+                quizBox.innerHTML = '';
+                quizBox.style.display = 'flex';
+                
                 slide.choices.forEach((choice, index) => {
-                    html += `
+                    quizBox.innerHTML += `
                         <button class="choice-item" id="choice-${index}" onclick="selectQuizChoice(${index})">
                             <div class="choice-bullet">${String.fromCharCode(65 + index)}</div>
-                            <span style="font-weight: 500;">${choice}</span>
+                            <span>${choice}</span>
                         </button>
                     `;
                 });
-                html += `
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-outline" onclick="prevSlide()" ${activeSlideIndex === 0 ? "disabled" : ""}>Previous</button>
-                        <button class="btn btn-primary" id="quiz-submit-btn" onclick="submitQuizAnswer()" disabled>Submit Answer</button>
-                    </div>
-                `;
-                pane.innerHTML = html;
+                
+                nextBtn.disabled = true;
+                nextBtn.innerText = "Submit Answer";
+                nextBtn.onclick = submitQuizAnswer;
+                
             } else if (slide.type === "coding") {
-                html += `
-                    <p style="margin-bottom: 1.5rem;"><strong>Exercise Task:</strong> ${slide.task}</p>
-                    
-                    <div class="editor-container">
-                        <div class="editor-header">
-                            <div class="editor-title">exercise.go</div>
-                            <button class="btn btn-outline" style="padding: 0.3rem 0.8rem; font-size: 0.75rem;" onclick="resetExerciseCode()">Reset</button>
-                        </div>
-                        <div class="editor-body">
-                            <div class="line-numbers" id="exercise-line-numbers">
-                                1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12
-                            </div>
-                            <textarea class="editor-textarea" id="exercise-textarea" spellcheck="false" oninput="updateLineNumbers('exercise-textarea', 'exercise-line-numbers')">${slide.template}</textarea>
-                        </div>
-                        <div class="editor-footer">
-                            <div style="font-size: 0.75rem; color: var(--text-muted);">Verify compile correctness</div>
-                            <button class="btn btn-accent" onclick="runExerciseCode()">Compile & Run</button>
-                        </div>
-                    </div>
-
-                    <div class="console-output" id="exercise-console">
-                        <div class="console-line">Ready to compile...</div>
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="btn btn-outline" onclick="prevSlide()" ${activeSlideIndex === 0 ? "disabled" : ""}>Previous</button>
-                        <button class="btn btn-primary" id="coding-continue-btn" onclick="nextSlide()" disabled>Continue</button>
-                    </div>
+                slideBody.innerHTML = `
+                    <h2>${slide.title}</h2>
+                    <p style="margin-bottom: 0.75rem;"><strong>Task:</strong> ${slide.task}</p>
                 `;
-                pane.innerHTML = html;
+                
+                // Open Editor layout side-by-side
+                editorPane.style.display = 'flex';
+                activeCard.style.maxWidth = '500px';
+                
+                // Write template parameters to the shared editor
+                document.getElementById('exercise-textarea').value = slide.template;
+                document.getElementById('exercise-console').innerHTML = '<div class="console-line">Ready to test...</div>';
                 updateLineNumbers('exercise-textarea', 'exercise-line-numbers');
+                
+                nextBtn.disabled = true;
+                nextBtn.innerText = "Continue";
+                nextBtn.onclick = nextSlide;
             }
         }
 
         function selectQuizChoice(index) {
-            if (activeSelectedAnswer !== null) return; // Answer already submitted
+            if (activeSelectedAnswer !== null) return;
             
             document.querySelectorAll('.choice-item').forEach(item => {
                 item.style.borderColor = "var(--border-color)";
-                item.style.background = "var(--panel-bg)";
+                item.style.boxShadow = "var(--clay-shadow-btn-light)";
             });
             
             const selected = document.getElementById(`choice-${index}`);
-            selected.style.borderColor = "var(--accent)";
+            selected.style.borderColor = "var(--blue-primary)";
             
             activeSelectedAnswer = index;
-            document.getElementById('quiz-submit-btn').disabled = false;
+            document.getElementById('slide-next-btn').disabled = false;
         }
 
         function submitQuizAnswer() {
             const slide = courseData[activeChapterId].slides[activeSlideIndex];
             const selectedItem = document.getElementById(`choice-${activeSelectedAnswer}`);
+            const nextBtn = document.getElementById('slide-next-btn');
             
             if (activeSelectedAnswer === slide.correctIndex) {
                 selectedItem.classList.add('correct');
                 playFeedbackSound(true);
                 userXP += 100;
                 updateXPDisplay();
-                document.getElementById('quiz-submit-btn').innerText = "Continue";
-                document.getElementById('quiz-submit-btn').onclick = nextSlide;
+                nextBtn.disabled = false;
+                nextBtn.innerText = "Continue";
+                nextBtn.onclick = nextSlide;
             } else {
                 selectedItem.classList.add('incorrect');
-                document.getElementById(`choice-${slide.correctIndex}`).classList.add('correct');
+                const correctItem = document.getElementById(`choice-${slide.correctIndex}`);
+                if (correctItem) correctItem.classList.add('correct');
                 playFeedbackSound(false);
-                document.getElementById('quiz-submit-btn').disabled = true;
+                nextBtn.disabled = true;
                 setTimeout(() => {
                     loadActiveSlide();
-                }, 1800);
+                }, 1600);
             }
         }
 
         function resetExerciseCode() {
             const slide = courseData[activeChapterId].slides[activeSlideIndex];
             document.getElementById('exercise-textarea').value = slide.template;
-            document.getElementById('exercise-console').innerHTML = '<div class="console-line">Ready to compile...</div>';
+            document.getElementById('exercise-console').innerHTML = '<div class="console-line">Ready to test...</div>';
             updateLineNumbers('exercise-textarea', 'exercise-line-numbers');
         }
 
@@ -1444,9 +1476,9 @@ func main() {
                 playFeedbackSound(true);
                 userXP += 150;
                 updateXPDisplay();
-                document.getElementById('coding-continue-btn').disabled = false;
+                document.getElementById('slide-next-btn').disabled = false;
             } else {
-                consoleBox.innerHTML = `<div class="console-line error"># compile failed\n${res.msg}</div>`;
+                consoleBox.innerHTML = `<div class="console-line error"># compilation error\n${res.msg}</div>`;
                 playFeedbackSound(false);
             }
         }
@@ -1464,7 +1496,6 @@ func main() {
                 activeSlideIndex++;
                 loadActiveSlide();
             } else {
-                // Completed Chapter
                 completedNodes[activeChapterId] = true;
                 if (activeChapterId < 8) {
                     activeChapterId++;
@@ -1482,15 +1513,15 @@ func main() {
             const linesCount = textarea.value.split('\n').length;
             
             let linesHTML = '';
-            for (let i = 1; i <= Math.max(linesCount, 12); i++) {
+            for (let i = 1; i <= Math.max(linesCount, 4); i++) {
                 linesHTML += i + '<br>';
             }
             numBox.innerHTML = linesHTML;
         }
 
-        /* ── Sandbox Compile Simulator logic ── */
+        /* ── Sandbox Logic ── */
         const sandboxTemplates = {
-            hello: `package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Welcome to the CONNEX Go Lab!")\n}`,
+            hello: `package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Sandbox connection online.")\n}`,
             pointer: `package main\n\nimport "fmt"\n\nfunc main() {\n    count := 10\n    ptr := &count\n    fmt.Println("Address:", ptr)\n    fmt.Println("Value:", *ptr)\n}`,
             struct: `package main\n\nimport (\n    "encoding/json"\n    "fmt"\n)\n\ntype Asset struct {\n    Name  string \`json:"asset_name"\`\n    Value int    \`json:"asset_value"\`\n}\n\nfunc main() {\n    a := Asset{Name: "Witness Key", Value: 250}\n    b, _ := json.Marshal(a)\n    fmt.Println(string(b))\n}`,
             errors: `package main\n\nimport (\n    "errors"\n    "fmt"\n)\n\nfunc main() {\n    err := errors.New("database locked")\n    wrapped := fmt.Errorf("read failed: %w", err)\n    fmt.Println("Error:", wrapped)\n    fmt.Println("Is target?", errors.Is(wrapped, err))\n}`,
@@ -1511,34 +1542,32 @@ func main() {
             const code = document.getElementById('sandbox-textarea').value;
             const consoleBox = document.getElementById('sandbox-console-box');
             
-            consoleBox.innerHTML = '<div class="console-line">Initializing build environment...</div>';
+            consoleBox.innerHTML = '<div class="console-line">Compiling...</div>';
             
             setTimeout(() => {
-                // Simulate Go compiler verification parser rules
                 if (!code.includes("package main")) {
-                    consoleBox.innerHTML += '<div class="console-line error"># compile failed\nmain.go:1:1: expected \'package\', found \'EOF\'</div>';
+                    consoleBox.innerHTML += '<div class="console-line error"># compilation error\nmain.go:1: expected package main</div>';
                     playFeedbackSound(false);
                     return;
                 }
                 
                 if (code.includes("import") && !code.includes('"')) {
-                    consoleBox.innerHTML += '<div class="console-line error"># compile failed\nmain.go:3:8: imports must be string literals (double quoted)</div>';
+                    consoleBox.innerHTML += '<div class="console-line error"># compilation error\nmain.go:3: imports must use double quotes</div>';
                     playFeedbackSound(false);
                     return;
                 }
 
                 if (!code.includes("func main()")) {
-                    consoleBox.innerHTML += '<div class="console-line error"># compile failed\nruntime: main function undeclared in package main</div>';
+                    consoleBox.innerHTML += '<div class="console-line error"># compilation error\nruntime: missing main function entry point</div>';
                     playFeedbackSound(false);
                     return;
                 }
 
-                // Simulate execution outputs based on contents
-                let out = "=== Run Executable ===\n";
-                if (code.includes("Welcome to the CONNEX Go Lab!")) {
-                    out += "Welcome to the CONNEX Go Lab!\n";
+                let out = "=== Executing program ===\n";
+                if (code.includes("Sandbox connection online.")) {
+                    out += "Sandbox connection online.\n";
                 } else if (code.includes("ptr :=") && code.includes("*ptr")) {
-                    out += "Address: 0xc0000180a0\nValue: 10\n";
+                    out += "Address: 0xc0000140b2\nValue: 10\n";
                 } else if (code.includes("json.Marshal")) {
                     out += '{"asset_name":"Witness Key","asset_value":250}\n';
                 } else if (code.includes("errors.Is")) {
@@ -1546,7 +1575,7 @@ func main() {
                 } else if (code.includes("Channel message:")) {
                     out += "Channel message: Signal\n";
                 } else {
-                    out += "Program completed successfully (no console outputs printed).\n";
+                    out += "Process finished with exit code 0\n";
                 }
                 
                 consoleBox.innerHTML = `<div class="console-line success">${out}</div>`;
@@ -1554,7 +1583,7 @@ func main() {
             }, 600);
         }
 
-        // Load first template initially
+        // Initially load sandbox template
         loadSandboxTemplate();
     </script>
 </body>
