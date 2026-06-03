@@ -115,3 +115,34 @@ Senior engineers will want to know **why** this architecture was modeled this wa
 3.  **Why Blind Signing and not full data replication?**
     - *Data Leakage Risk:* If the witness nodes needed to read transaction details (names, amounts, accounts) to sign, they would become targets for hackers, violating customer privacy laws.
     - *Blind Signer Solution:* Witnesses only verify the integrity of the math. They sign a 32-byte hash. This keeps the witness logic extremely simple (lowering bug risk) and guarantees zero leak of sensitive financial data.
+
+---
+
+## 4. The Role of AI vs. Deterministic Rules in Banking
+
+A common architectural question from senior auditors is: *"Why did you use a static rules engine instead of an AI model (like a Large Language Model or a neural network classifier) to enrich and translate these payment transactions?"*
+
+In high-throughput, mission-critical financial software, **AI models are deliberately excluded from the critical transaction path** for three reasons:
+
+### 1. Deterministic Execution vs. Probabilistic Guessing
+*   **Deterministic (Chosen Design):** A rules engine is mathematical. If you input ATM Processing Code `01` and Amount `KES 1,500,000`, it will trigger `RULE-CBK-HIGH-VALUE-KES` and settle via RTGS **100% of the time**.
+*   **AI (LLM / Classifier):** AI models are probabilistic. They choose outputs based on probabilities. If a model encounters a slightly skewed input layout, it might "hallucinate" or guess a different category code. In payment settlement, **a 99.9% accuracy rate is a failure**; a single misrouted transaction could violate AML compliance laws or misplace millions.
+
+### 2. Microsecond Latency SLAs
+*   **Rules Engine Execution:** Our Go compilation engine executes rules in memory in under **1 microsecond (0.001 milliseconds)**.
+*   **AI Engine Execution:** Even the fastest local classifier or API query takes **50 to 500 milliseconds**. Adding half a second of latency per transaction at the gateway level makes it impossible to achieve the low-latency response times required by payment clearing networks.
+
+### 3. Absolute Explainability (Provenance Audit Trail)
+*   **Rules Engine Logging:** As shown in `docs/ENRICHMENT_ENGINE.md`, the engine returns a detailed ledger explaining the exact rule ID that generated each field outcome.
+*   **AI Logging:** Neural networks are "black boxes." If a regulator asks, *"Why did this transaction get classified as a salary payment instead of a purchase of goods?"*, a neural network cannot answer beyond stating the statistical activation rates of its weights, which is legally unacceptable to central bank auditors.
+
+### Where AI Safely Fits in the Connex Ecosystem
+
+AI is highly valuable in Connex when deployed **outside the critical runtime path** (offline or asynchronously):
+
+1.  **Rule Generation (Offline Compiler Assistant):**
+    - AI is used to read large banking compliance PDF files (e.g. SWIFT updates) and automatically generate the YAML structures for `rules.yaml` rules. These are then human-reviewed, audited, and compiled into the Go binary.
+2.  **Post-Facto Anomaly Detection (Asynchronous Auditing):**
+    - An offline AI agent scans the SQLite database ledger logs in the background (off the main thread) to find complex fraud patterns, duplicate transactions, or money laundering loops that simple static rules cannot detect.
+3.  **Synthetic Load Test Harness:**
+    - AI generators produce thousands of realistic, synthetic ISO 8583 banking messages to simulate ATM stress-testing environments.
